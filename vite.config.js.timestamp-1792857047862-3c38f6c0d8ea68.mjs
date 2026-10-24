@@ -1,0 +1,33 @@
+// vite.config.js
+import { defineConfig } from "file:///C:/Users/50496/Desktop/BadDev/BadDevvv/node_modules/vite/dist/node/index.js";
+import { fileURLToPath, URL } from "node:url";
+import electron from "file:///C:/Users/50496/Desktop/BadDev/BadDevvv/node_modules/vite-plugin-electron/dist/index.mjs";
+import renderer from "file:///C:/Users/50496/Desktop/BadDev/BadDevvv/node_modules/vite-plugin-electron-renderer/dist/index.mjs";
+var __vite_injected_original_import_meta_url = "file:///C:/Users/50496/Desktop/BadDev/BadDevvv/vite.config.js";
+var vite_config_default = defineConfig({
+  base: "./",
+  plugins: [
+    electron({
+      entry: "main.js"
+      // Aquí arranca tu archivo de Electron
+    }),
+    renderer()
+  ],
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL("./index.html", __vite_injected_original_import_meta_url)),
+        learn: fileURLToPath(new URL("./learn.html", __vite_injected_original_import_meta_url)),
+        lessons: fileURLToPath(new URL("./lessons.html", __vite_injected_original_import_meta_url)),
+        manual: fileURLToPath(new URL("./manual.html", __vite_injected_original_import_meta_url)),
+        sandbox: fileURLToPath(new URL("./sandbox.html", __vite_injected_original_import_meta_url))
+      }
+    }
+  }
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcuanMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCJDOlxcXFxVc2Vyc1xcXFw1MDQ5NlxcXFxEZXNrdG9wXFxcXEJhZERldlxcXFxCYWREZXZ2dlwiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9maWxlbmFtZSA9IFwiQzpcXFxcVXNlcnNcXFxcNTA0OTZcXFxcRGVza3RvcFxcXFxCYWREZXZcXFxcQmFkRGV2dnZcXFxcdml0ZS5jb25maWcuanNcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfaW1wb3J0X21ldGFfdXJsID0gXCJmaWxlOi8vL0M6L1VzZXJzLzUwNDk2L0Rlc2t0b3AvQmFkRGV2L0JhZERldnZ2L3ZpdGUuY29uZmlnLmpzXCI7aW1wb3J0IHsgZGVmaW5lQ29uZmlnIH0gZnJvbSAndml0ZSc7XG5pbXBvcnQgeyBmaWxlVVJMVG9QYXRoLCBVUkwgfSBmcm9tICdub2RlOnVybCc7XG5pbXBvcnQgZWxlY3Ryb24gZnJvbSAndml0ZS1wbHVnaW4tZWxlY3Ryb24nO1xuaW1wb3J0IHJlbmRlcmVyIGZyb20gJ3ZpdGUtcGx1Z2luLWVsZWN0cm9uLXJlbmRlcmVyJztcblxuLy8gQ29uZmlndXJhY2lcdTAwRjNuIHVuaWZpY2FkYSBwYXJhIEJhZERldjogTXVsdGktcFx1MDBFMWdpbmEgKyBTb3BvcnRlIGRlIEVsZWN0cm9uIERlc2t0b3BcbmV4cG9ydCBkZWZhdWx0IGRlZmluZUNvbmZpZyh7XG4gIGJhc2U6ICcuLycsXG4gIHBsdWdpbnM6IFtcbiAgICBlbGVjdHJvbih7XG4gICAgICBlbnRyeTogJ21haW4uanMnLCAvLyBBcXVcdTAwRUQgYXJyYW5jYSB0dSBhcmNoaXZvIGRlIEVsZWN0cm9uXG4gICAgfSksXG4gICAgcmVuZGVyZXIoKSxcbiAgXSxcbiAgYnVpbGQ6IHtcbiAgICBvdXREaXI6ICdkaXN0JywgXG4gICAgc291cmNlbWFwOiBmYWxzZSxcbiAgICByb2xsdXBPcHRpb25zOiB7XG4gICAgICBpbnB1dDoge1xuICAgICAgICBtYWluOiBmaWxlVVJMVG9QYXRoKG5ldyBVUkwoJy4vaW5kZXguaHRtbCcsIGltcG9ydC5tZXRhLnVybCkpLFxuICAgICAgICBsZWFybjogZmlsZVVSTFRvUGF0aChuZXcgVVJMKCcuL2xlYXJuLmh0bWwnLCBpbXBvcnQubWV0YS51cmwpKSxcbiAgICAgICAgbGVzc29uczogZmlsZVVSTFRvUGF0aChuZXcgVVJMKCcuL2xlc3NvbnMuaHRtbCcsIGltcG9ydC5tZXRhLnVybCkpLFxuICAgICAgICBtYW51YWw6IGZpbGVVUkxUb1BhdGgobmV3IFVSTCgnLi9tYW51YWwuaHRtbCcsIGltcG9ydC5tZXRhLnVybCkpLFxuICAgICAgICBzYW5kYm94OiBmaWxlVVJMVG9QYXRoKG5ldyBVUkwoJy4vc2FuZGJveC5odG1sJywgaW1wb3J0Lm1ldGEudXJsKSlcbiAgICAgIH1cbiAgICB9XG4gIH1cbn0pO1xuIl0sCiAgIm1hcHBpbmdzIjogIjtBQUFnVCxTQUFTLG9CQUFvQjtBQUM3VSxTQUFTLGVBQWUsV0FBVztBQUNuQyxPQUFPLGNBQWM7QUFDckIsT0FBTyxjQUFjO0FBSDBLLElBQU0sMkNBQTJDO0FBTWhQLElBQU8sc0JBQVEsYUFBYTtBQUFBLEVBQzFCLE1BQU07QUFBQSxFQUNOLFNBQVM7QUFBQSxJQUNQLFNBQVM7QUFBQSxNQUNQLE9BQU87QUFBQTtBQUFBLElBQ1QsQ0FBQztBQUFBLElBQ0QsU0FBUztBQUFBLEVBQ1g7QUFBQSxFQUNBLE9BQU87QUFBQSxJQUNMLFFBQVE7QUFBQSxJQUNSLFdBQVc7QUFBQSxJQUNYLGVBQWU7QUFBQSxNQUNiLE9BQU87QUFBQSxRQUNMLE1BQU0sY0FBYyxJQUFJLElBQUksZ0JBQWdCLHdDQUFlLENBQUM7QUFBQSxRQUM1RCxPQUFPLGNBQWMsSUFBSSxJQUFJLGdCQUFnQix3Q0FBZSxDQUFDO0FBQUEsUUFDN0QsU0FBUyxjQUFjLElBQUksSUFBSSxrQkFBa0Isd0NBQWUsQ0FBQztBQUFBLFFBQ2pFLFFBQVEsY0FBYyxJQUFJLElBQUksaUJBQWlCLHdDQUFlLENBQUM7QUFBQSxRQUMvRCxTQUFTLGNBQWMsSUFBSSxJQUFJLGtCQUFrQix3Q0FBZSxDQUFDO0FBQUEsTUFDbkU7QUFBQSxJQUNGO0FBQUEsRUFDRjtBQUNGLENBQUM7IiwKICAibmFtZXMiOiBbXQp9Cg==

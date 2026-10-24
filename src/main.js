@@ -11,6 +11,7 @@ import { chooseFiles, writeFile, fileLanguage, extensionOf, makeUniqueName, vali
 import { languageForFile, languageForType, supportedFileName, indentSizeForFile } from './languages.js';
 import { createStarterProject, readDirectory, validProjectPath, PROJECT_TYPES, MAX_FILE_BYTES, MAX_PROJECT_FILES, writeProjectFile } from './project.js';
 import { buildPreview, selectPreviewEntry, openDetachedPreview, previewableFiles } from './preview.js';
+import { buildAssetMap, setAssets, clearAssets, getAssets, assetCount, isImageName } from './assets.js';
 import { makeZip, downloadBlob } from './zip.js';
 import { readSession, writeSession, removeSession, SESSION_VERSION } from './session.js';
 import packageInfo from '../package.json';
@@ -699,7 +700,7 @@ function showInfo(kind) {
     refs.infoContent.innerHTML = '<p><strong>Ctrl + N</strong> — Nuevo archivo</p><p><strong>Ctrl + O</strong> — Abrir archivos</p><p><strong>Ctrl + S</strong> — Guardar</p><p><strong>Ctrl + W</strong> — Cerrar pestaña</p><p><strong>Ctrl + F</strong> — Buscar texto</p><p><strong>Ctrl + H</strong> — Buscar y reemplazar</p><p><strong>Ctrl + Espacio</strong> — Sugerencias</p><p><strong>Ctrl + Z</strong> — Deshacer (editor)</p><p><strong>Ctrl + /</strong> — Alternar comentario</p><p><strong>Ctrl + Y</strong> — Rehacer (editor)</p><p class="info-muted">Los navegadores pueden reservar algunos atajos. Usa Editar si un atajo no llega a BadDev. Los resultados de búsqueda pertenecen al archivo activo.</p>';
   } else {
     refs.infoTitle.textContent = `BadDev — ${displayVersion(packageInfo.version)}`;
-    refs.infoContent.innerHTML = '<p><strong>Code without mercy.</strong> BadDev incluye LEARN WITHOUT MERCY como una página independiente, con cursos, retos y guías interactivas.</p><p>La vista previa de esta etapa funciona con HTML, Markdown, JSON y TypeScript, siempre de forma local, sin backend ni conexiones externas.</p><p class="info-muted">BadDev siempre abre en el menú. Guarda o descarga el proyecto antes de cerrarlo. El respaldo de emergencia solo se recupera manualmente desde Archivo.</p>';
+    refs.infoContent.innerHTML = '<p><strong>Code without mercy.</strong> BadDev incluye LEARN WITHOUT MERCY como una página independiente, con cursos, retos y guías interactivas.</p><p>La vista previa funciona con HTML, Markdown, JSON y TypeScript, siempre de forma local, sin backend ni conexiones externas. Si abres una carpeta con imágenes, también se muestran en la vista previa.</p><p class="info-muted">BadDev siempre abre en el menú. Guarda o descarga el proyecto antes de cerrarlo. El respaldo de emergencia solo se recupera manualmente desde Archivo.</p>';
   }
   refs.infoDialog.showModal();
 }
@@ -711,6 +712,7 @@ function confirmReplaceWorkspace() {
 
 function clearWorkspace() {
   files.splice(0);
+  clearAssets();
   activeId = null;
   project = null;
   previewPreferredEntry = '';
@@ -719,9 +721,12 @@ function clearWorkspace() {
   renderWorkspace();
 }
 
-function loadProject(name, entries, dirHandle = null) {
+function loadProject(name, entries, dirHandle = null, images = []) {
   clearWorkspace();
   project = { name, dirHandle };
+  const built = buildAssetMap(images);
+  setAssets(built.map);
+  if (built.warnings.length) console.warn('Imágenes omitidas:', built.warnings);
   for (const entry of entries) {
     if (validProjectPath(entry.name) && PROJECT_TYPES.has(extensionOf(entry.name))) {
       insertFile({ ...entry, isNew: !dirHandle && entry.isNew === true });
@@ -763,8 +768,9 @@ async function openFolder() {
       const dir = await window.showDirectoryPicker({ mode: 'readwrite', id: 'baddev-project' });
       const result = await readDirectory(dir);
       if (!result.files.length) { toast('No se encontraron archivos de código compatibles en esa carpeta.', 'error'); return; }
-      loadProject(dir.name, result.files, dir);
-      toast(`${result.files.length} archivo(s) abiertos de «${dir.name}».${result.warnings.length ? ` ${result.warnings.length} advertencia(s).` : ''}`);
+      loadProject(dir.name, result.files, dir, result.images);
+      const pics = assetCount();
+      toast(`${result.files.length} archivo(s) abiertos de «${dir.name}».${pics ? ` ${pics} imagen(es) disponibles en la vista previa.` : ''}${result.warnings.length ? ` ${result.warnings.length} advertencia(s).` : ''}`);
       return;
     } catch (error) {
       if (error.name === 'AbortError') return;
@@ -781,15 +787,21 @@ refs.nativeFolderInput.addEventListener('change', async (event) => {
   if (!chosen.length) return;
   const prefix = chosen[0].webkitRelativePath.split('/')[0] || 'Proyecto importado';
   const entries = [];
+  const images = [];
   for (const file of chosen) {
-    if (entries.length >= MAX_PROJECT_FILES) break;
     const relative = file.webkitRelativePath.split('/').slice(1).join('/');
+    if (isImageName(relative) && validProjectPath(relative)) {
+      if (file.size <= 3_000_000) images.push({ name: relative, bytes: new Uint8Array(await file.arrayBuffer()) });
+      continue;
+    }
+    if (entries.length >= MAX_PROJECT_FILES) continue;
     if (!validProjectPath(relative) || !PROJECT_TYPES.has(extensionOf(relative)) || file.size > MAX_FILE_BYTES) continue;
     entries.push({ name: relative, content: await file.text() });
   }
   if (!entries.length) { toast('No se encontraron archivos de código compatibles.', 'error'); return; }
-  loadProject(prefix, entries);
-  toast(`Carpeta importada: ${entries.length} archivo(s). Para guardar usa ZIP o Guardar proyecto.`);
+  loadProject(prefix, entries, null, images);
+  const pics = assetCount();
+  toast(`Carpeta importada: ${entries.length} archivo(s)${pics ? ` y ${pics} imagen(es)` : ''}. Para guardar usa ZIP o Guardar proyecto.`);
   refs.nativeFolderInput.value = '';
 });
 
@@ -827,7 +839,8 @@ function exportProjectZip() {
   if (!project || !files.length) { toast('Crea o abre un proyecto antes de descargarlo.', 'error'); return; }
   try {
     const snapshots = files.map(f => ({ name: f.name, content: f.content }));
-    const blob = makeZip(snapshots);
+    const imageEntries = [...getAssets().values()].map(a => ({ name: a.name, data: a.bytes }));
+    const blob = makeZip([...snapshots, ...imageEntries]);
     const name = (project.name.replace(/[^\wáéíóúüñ-]+/gi, '-').slice(0, 55) || 'Mi-BadDev').replace(/^-|-$/g, '');
     downloadBlob(blob, `${name}.zip`);
     for (const f of files) { f.savedContent = snapshots.find(s => s.name === f.name)?.content ?? f.savedContent; f.lastSaveMode = 'download'; f.restored = false; }
@@ -931,7 +944,7 @@ async function preparedPreview() {
   const entry = refs.previewEntry.value;
   if (!entry || /\.py$/i.test(entry)) throw new Error('Selecciona un archivo web compatible para la vista previa. Python utiliza su propia consola.');
   const token = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  const result = await buildPreview(files, entry, token, { captureConsole: true });
+  const result = await buildPreview(files, entry, token, { captureConsole: true, assets: getAssets() });
   return { ...result, token };
 }
 function toggleComments() {

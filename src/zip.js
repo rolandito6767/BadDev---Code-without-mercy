@@ -1,4 +1,4 @@
-// Minimal UTF-8 ZIP writer (stored entries, no third-party library).
+// Minimal UTF-8 ZIP writer (stored entries, no third-party library). V 1.3: acepta {name, data: Uint8Array} para imágenes.
 // Designed for small web projects; UTF-8 bit is set, CRC32 is verified by unzip tools.
 const encoder = new TextEncoder();
 const CRC_TABLE = (() => {
@@ -19,7 +19,7 @@ function write16(out, at, value) { out.setUint16(at, value, true); }
 function write32(out, at, value) { out.setUint32(at, value >>> 0, true); }
 function zipEntry(file) {
   const name = encoder.encode(file.name);
-  const data = encoder.encode(file.content);
+  const data = file.data instanceof Uint8Array ? file.data : encoder.encode(file.content);
   if (name.length > 65535 || data.length >= 0xffffffff) throw new Error('Archivo ZIP demasiado grande.');
   return { name, data, crc: crc32(data) };
 }

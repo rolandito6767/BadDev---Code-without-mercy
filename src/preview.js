@@ -1,6 +1,8 @@
 import { resolveProjectReference } from './project.js';
+import { getAssets, createImageResolver, inlineCssImages, inlineHtmlImages } from './assets.js';
 
 const MAX_PREVIEW_BYTES = 7_000_000;
+const MAX_IMAGE_PREVIEW_CHARS = 24_000_000; // imágenes incrustadas (base64), aparte del límite del código
 // Scripts are intentionally permitted *only* in the opaque-origin sandbox iframe.
 const CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src data: blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'";
 const PREVIEW_EXTENSIONS = new Set(['html', 'htm', 'md', 'json', 'ts']);
@@ -115,17 +117,29 @@ function previewShell({ title, kicker, bodyClass = '', content, script = '', ses
   </style><script>${safeScript(reporter)}</script></head><body class="${bodyClass}"><main><header><small>${escapeHtml(kicker)}</small><h1>${escapeHtml(title)}</h1><p class="preview-sub">Vista previa generada en memoria por BadDev. No se ejecutan conexiones externas.</p></header><section class="preview-body">${content}</section></main>${script ? `<script>${safeScript(script)}</script>` : ''}</body></html>`;
 }
 
-function renderMarkdownInline(text) {
-  return escapeHtml(text)
+function renderMarkdownInline(text, resolveImage = null) {
+  const images = [];
+  const withTokens = text.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (match, alt, src) => {
+    images.push({ alt, src });
+    return `\u0000IMG${images.length - 1}\u0000`;
+  });
+  const html = escapeHtml(withTokens)
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/__([^_]+)__/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
     .replace(/_([^_]+)_/g, '<em>$1</em>')
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer noopener">$1</a>');
+  return html.replace(/\u0000IMG(\d+)\u0000/g, (match, index) => {
+    const { alt, src } = images[Number(index)];
+    const uri = resolveImage ? resolveImage(src) : null;
+    return uri
+      ? `<img class="md-img" src="${uri}" alt="${escapeHtml(alt)}" loading="lazy"/>`
+      : `<span class="md-img-missing">🖼 ${escapeHtml(alt || 'Imagen')} <small>(no encontrada: ${escapeHtml(src)})</small></span>`;
+  });
 }
 
-function renderMarkdown(markdown = '') {
+function renderMarkdown(markdown = '', resolveImage = null) {
   const lines = markdown.replace(/\r/g, '').split('\n');
   const out = [];
   let paragraph = [];
@@ -133,12 +147,12 @@ function renderMarkdown(markdown = '') {
   let code = null;
   const flushParagraph = () => {
     if (!paragraph.length) return;
-    out.push(`<p>${renderMarkdownInline(paragraph.join(' '))}</p>`);
+    out.push(`<p>${renderMarkdownInline(paragraph.join(' '), resolveImage)}</p>`);
     paragraph = [];
   };
   const flushList = () => {
     if (!list) return;
-    out.push(`<${list.type}>${list.items.map(item => `<li>${renderMarkdownInline(item)}</li>`).join('')}</${list.type}>`);
+    out.push(`<${list.type}>${list.items.map(item => `<li>${renderMarkdownInline(item, resolveImage)}</li>`).join('')}</${list.type}>`);
     list = null;
   };
   const flushCode = () => {
@@ -160,13 +174,13 @@ function renderMarkdown(markdown = '') {
     const heading = trimmed.match(/^(#{1,3})\s+(.+)$/);
     if (heading) {
       flushParagraph(); flushList();
-      out.push(`<h${heading[1].length}>${renderMarkdownInline(heading[2])}</h${heading[1].length}>`);
+      out.push(`<h${heading[1].length}>${renderMarkdownInline(heading[2], resolveImage)}</h${heading[1].length}>`);
       continue;
     }
     const quote = trimmed.match(/^>\s?(.*)$/);
     if (quote) {
       flushParagraph(); flushList();
-      out.push(`<blockquote>${renderMarkdownInline(quote[1])}</blockquote>`);
+      out.push(`<blockquote>${renderMarkdownInline(quote[1], resolveImage)}</blockquote>`);
       continue;
     }
     const unordered = trimmed.match(/^[-*]\s+(.+)$/);
@@ -206,16 +220,23 @@ function countJsonNodes(value) {
   return total;
 }
 
-async function buildMarkdownPreview(file, session) {
+async function buildMarkdownPreview(file, session, options = {}) {
+  const stats = { chars: 0, missing: new Set(), used: new Set() };
+  const resolveImage = createImageResolver(options.assets ?? getAssets(), file.name, stats);
+  const warnings = [];
+  const body = renderMarkdown(file.content, resolveImage);
+  if (stats.chars > MAX_IMAGE_PREVIEW_CHARS) throw new Error('Las imágenes de la vista previa superan el límite de 24 MB.');
+  for (const ref of stats.missing) warnings.push(`No se encontró la imagen: ${ref}`);
   const html = previewShell({
     title: file.name,
     kicker: `BADDEV / ${previewBadge(file.name)}`,
     bodyClass: 'markdown-body',
     session,
     captureConsole: false,
-    content: renderMarkdown(file.content)
+    styles: '.md-img{max-width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}.md-img-missing{color:var(--muted)}',
+    content: body
   });
-  return { html, warnings: [], loads: [] };
+  return { html, warnings, loads: [...stats.used] };
 }
 
 async function buildJsonPreview(file, session) {
@@ -256,6 +277,8 @@ async function buildHtmlPreview(files, entry = 'index.html', session = 'baddev-p
   const warnings = [];
   documentHtml.querySelectorAll('base').forEach(node => { node.remove(); warnings.push('La etiqueta <base> no se utiliza en la vista previa.'); });
 
+  const assets = options.assets ?? getAssets();
+  const imageStats = { chars: 0, missing: new Set(), used: new Set() };
   let bytes = htmlFile.content.length;
   const loads = [];
   for (const element of [...documentHtml.querySelectorAll('link[rel~="stylesheet"][href], script[src]')]) {
@@ -274,7 +297,7 @@ async function buildHtmlPreview(files, entry = 'index.html', session = 'baddev-p
     if (element.localName === 'link') {
       const style = documentHtml.createElement('style');
       style.dataset.baddevFile = match.name;
-      style.textContent = match.content;
+      style.textContent = assets.size ? inlineCssImages(match.content, createImageResolver(assets, match.name, imageStats)) : match.content;
       element.replaceWith(style);
     } else {
       const script = documentHtml.createElement('script');
@@ -292,6 +315,11 @@ async function buildHtmlPreview(files, entry = 'index.html', session = 'baddev-p
       element.replaceWith(script);
     }
   }
+  if (assets.size || documentHtml.querySelector('img[src], [style*="url("]')) {
+    inlineHtmlImages(documentHtml, htmlFile.name, assets, warnings, imageStats);
+  }
+  if (imageStats.chars > MAX_IMAGE_PREVIEW_CHARS) throw new Error('Las imágenes de la vista previa superan el límite de 24 MB.');
+  loads.push(...imageStats.used);
   const head = documentHtml.head;
   const policy = documentHtml.createElement('meta');
   policy.setAttribute('http-equiv', 'Content-Security-Policy');
@@ -320,7 +348,7 @@ async function buildHtmlPreview(files, entry = 'index.html', session = 'baddev-p
   })();`;
   policy.after(reporter);
   const output = `<!doctype html>\n${documentHtml.documentElement.outerHTML}`;
-  if (output.length > MAX_PREVIEW_BYTES * 1.3) throw new Error('El resultado de la vista previa supera el límite.');
+  if (output.length - imageStats.chars > MAX_PREVIEW_BYTES * 1.3) throw new Error('El resultado de la vista previa supera el límite.');
   return { html: output, warnings: [...new Set(warnings)], loads };
 }
 
@@ -330,7 +358,7 @@ export async function buildPreview(files, entry = 'index.html', session = 'badde
   if (!target) throw new Error('El archivo seleccionado ya no existe.');
   const kind = previewKind(target.name);
   if (kind === 'html') return buildHtmlPreview(files, entry, session, options);
-  if (kind === 'markdown') return buildMarkdownPreview(target, session);
+  if (kind === 'markdown') return buildMarkdownPreview(target, session, options);
   if (kind === 'json') return buildJsonPreview(target, session);
   if (kind === 'typescript') return buildTypeScriptPreview(target, session);
   throw new Error('La vista previa disponible en esta etapa admite HTML, Markdown, JSON y TypeScript.');

@@ -1,5 +1,6 @@
 import { extensionOf, validFilename } from './files.js';
 import { SUPPORTED_EXTENSIONS } from './languages.js';
+import { isImageName, MAX_IMAGE_BYTES } from './image-types.js';
 
 export const PROJECT_TYPES = new Set(SUPPORTED_EXTENSIONS);
 export const MAX_PROJECT_FILES = 250;
@@ -45,12 +46,21 @@ export function createStarterProject() {
 export async function readDirectory(dirHandle, maxFiles = MAX_PROJECT_FILES) {
   const results = [];
   const warnings = [];
+  const images = []; // V 1.3: imágenes [{ name, bytes }] para la vista previa
   async function visit(folder, prefix = '', depth = 0) {
     if (depth > 10) { warnings.push(`Se omitió ${prefix}: demasiadas subcarpetas.`); return; }
     for await (const [name, handle] of folder.entries()) {
       if (name.startsWith('.') || name === 'node_modules' || name === 'dist') continue;
       const path = prefix ? `${prefix}/${name}` : name;
       if (handle.kind === 'directory') { await visit(handle, path, depth + 1); continue; }
+      if (handle.kind === 'file' && isImageName(name) && validProjectPath(path)) {
+        try {
+          const diskImage = await handle.getFile();
+          if (diskImage.size > MAX_IMAGE_BYTES) warnings.push(`${path}: la imagen supera 3 MB y no se mostrará.`);
+          else images.push({ name: path, bytes: new Uint8Array(await diskImage.arrayBuffer()) });
+        } catch (error) { warnings.push(`No se pudo leer la imagen ${path}: ${error.message}`); }
+        continue;
+      }
       if (handle.kind !== 'file' || !validProjectPath(path) || !PROJECT_TYPES.has(extensionOf(name))) continue;
       if (results.length >= maxFiles) { warnings.push(`Límite de ${maxFiles} archivos alcanzado.`); return; }
       try {
@@ -62,7 +72,7 @@ export async function readDirectory(dirHandle, maxFiles = MAX_PROJECT_FILES) {
   }
   await visit(dirHandle);
   results.sort((a, b) => a.name.localeCompare(b.name, 'es'));
-  return { files: results, warnings };
+  return { files: results, warnings, images };
 }
 
 export async function projectFileHandle(root, path, create = true) {

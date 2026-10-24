@@ -1,10 +1,22 @@
-# BadDev V 1.2 — Etapa H
+# BadDev V 1.3 — Imágenes en la vista previa
 
 **CODE WITHOUT MERCY.**
 
 Esta es una actualización visual completa construida a partir de la Etapa G, con Python en el navegador y puente local, 12 lenguajes, Learn Without Mercy, Sandbox y proyectos.
 
 ## Novedades
+
+### V 1.3 — Imágenes en la vista previa
+
+- Al **abrir una carpeta** como proyecto, BadDev identifica las imágenes (PNG, JPG/JPEG, GIF, WebP, SVG, BMP, ICO y AVIF) en cualquier subcarpeta, por ejemplo `images/` o `img/`.
+- La **vista previa HTML** las muestra desde `<img src>`, `srcset`, `<source>`, `poster`, favicon, `style="background:url(...)"`, bloques `<style>` y hojas `.css` externas (las rutas relativas se resuelven desde cada archivo).
+- La **vista previa Markdown** muestra `![texto](images/foto.png)`.
+- Si una imagen no existe, aparece un aviso en la consola de la vista previa y se sigue mostrando el resto.
+- **Descargar proyecto ZIP** incluye también las imágenes.
+- Límites: 3 MB por imagen, 25 MB y 200 imágenes por proyecto. Las imágenes no se editan ni aparecen en el explorador de archivos de código.
+- Las imágenes viven en memoria mientras el proyecto está abierto: el respaldo de emergencia solo guarda texto, así que tras restaurarlo vuelve a abrir la carpeta para ver las imágenes.
+- La vista previa sigue aislada: sin red; las imágenes se incrustan como `data:` dentro del iframe.
+
 
 ### X para cerrar todo el proyecto
 
@@ -27,8 +39,8 @@ Los nuevos tonos se ven en el editor, pestañas, explorador, vistas de Python, b
 ## Instalar en Windows (Sublime Text)
 
 1. Guarda o exporta tus archivos personales antes de cambiar de versión.
-2. Extrae **BadDev-V1.2-Etapa-H.zip** en una carpeta nueva.
-3. Abre la carpeta **BadDev-V1.2-Etapa-H** con **File → Open Folder** en Sublime Text.
+2. Extrae **BadDev-V1.3.zip** en una carpeta nueva.
+3. Abre la carpeta **BadDev-V1.3** con **File → Open Folder** en Sublime Text.
 4. Abre CMD en esa carpeta y ejecuta:
 
 ```bat
