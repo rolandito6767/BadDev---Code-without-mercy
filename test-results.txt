@@ -1,0 +1,448 @@
+TAP version 13
+# Subtest: Vite usa ruta relativa y conserva recursos SVG en despliegues anidados
+ok 1 - Vite usa ruta relativa y conserva recursos SVG en despliegues anidados
+  ---
+  duration_ms: 1.929257
+  type: 'test'
+  ...
+# Subtest: Netlify y GitHub Pages compilan dist, no los fuentes sin transformar
+ok 2 - Netlify y GitHub Pages compilan dist, no los fuentes sin transformar
+  ---
+  duration_ms: 0.268433
+  type: 'test'
+  ...
+# Subtest: autoguardado y controles presentes y conectados
+ok 3 - autoguardado y controles presentes y conectados
+  ---
+  duration_ms: 0.658719
+  type: 'test'
+  ...
+# Subtest: detecta extensión y lenguaje sin importar mayúsculas
+ok 4 - detecta extensión y lenguaje sin importar mayúsculas
+  ---
+  duration_ms: 0.688163
+  type: 'test'
+  ...
+# Subtest: rechaza nombres de archivo inválidos en Windows
+ok 5 - rechaza nombres de archivo inválidos en Windows
+  ---
+  duration_ms: 1.185651
+  type: 'test'
+  ...
+# Subtest: evita conflictos entre nombres de archivo nuevos
+ok 6 - evita conflictos entre nombres de archivo nuevos
+  ---
+  duration_ms: 0.169885
+  type: 'test'
+  ...
+# Subtest: incluye plantillas editables para los tres lenguajes
+ok 7 - incluye plantillas editables para los tres lenguajes
+  ---
+  duration_ms: 0.189484
+  type: 'test'
+  ...
+# Subtest: la versión se deriva de package.json
+ok 8 - la versión se deriva de package.json
+  ---
+  duration_ms: 1.46568
+  type: 'test'
+  ...
+# Subtest: Learn es una segunda página compilada por Vite
+ok 9 - Learn es una segunda página compilada por Vite
+  ---
+  duration_ms: 1.121724
+  type: 'test'
+  ...
+# Subtest: menú principal conserva sus tres controles y Learn junto a ellos
+ok 10 - menú principal conserva sus tres controles y Learn junto a ellos
+  ---
+  duration_ms: 0.267481
+  type: 'test'
+  ...
+# Subtest: regreso a menú y apertura de ejemplos conservan la gestión de archivos
+ok 11 - regreso a menú y apertura de ejemplos conservan la gestión de archivos
+  ---
+  duration_ms: 0.177977
+  type: 'test'
+  ...
+# Subtest: ruta de aprendizaje incluye contenido sustancial y retos
+ok 12 - ruta de aprendizaje incluye contenido sustancial y retos
+  ---
+  duration_ms: 0.295784
+  type: 'test'
+  ...
+# Subtest: los retos de selección requieren respuesta exacta
+ok 13 - los retos de selección requieren respuesta exacta
+  ---
+  duration_ms: 0.144117
+  type: 'test'
+  ...
+# Subtest: HTML comprueba texto, cierre y atributos de un botón
+ok 14 - HTML comprueba texto, cierre y atributos de un botón
+  ---
+  duration_ms: 0.744118
+  type: 'test'
+  ...
+# Subtest: CSS comprueba selector y propiedades dentro del bloque
+ok 15 - CSS comprueba selector y propiedades dentro del bloque
+  ---
+  duration_ms: 0.418569
+  type: 'test'
+  ...
+# Subtest: if valida condición y mensaje dentro del bloque, no solo palabras sueltas
+ok 16 - if valida condición y mensaje dentro del bloque, no solo palabras sueltas
+  ---
+  duration_ms: 0.461463
+  type: 'test'
+  ...
+# Subtest: bucle comprueba exactamente un contador de tres repeticiones
+ok 17 - bucle comprueba exactamente un contador de tres repeticiones
+  ---
+  duration_ms: 0.545499
+  type: 'test'
+  ...
+# Subtest: evalúa correctamente ejercicio de lógica
+ok 18 - evalúa correctamente ejercicio de lógica
+  ---
+  duration_ms: 1.037448
+  type: 'test'
+  ...
+# Subtest: detecta ejercicio HTML incompleto
+ok 19 - detecta ejercicio HTML incompleto
+  ---
+  duration_ms: 0.231217
+  type: 'test'
+  ...
+# Subtest: acepta regla CSS básica para body
+ok 20 - acepta regla CSS básica para body
+  ---
+  duration_ms: 1.139912
+  type: 'test'
+  ...
+# Subtest: catálogo ofrece 12 lenguajes principales y texto como compatibilidad
+ok 21 - catálogo ofrece 12 lenguajes principales y texto como compatibilidad
+  ---
+  duration_ms: 1.077327
+  type: 'test'
+  ...
+# Subtest: reconoce extensiones alternativas y mayúsculas
+ok 22 - reconoce extensiones alternativas y mayúsculas
+  ---
+  duration_ms: 0.522304
+  type: 'test'
+  ...
+# Subtest: los 12 lenguajes se aceptan en proyectos y selectores de archivos
+ok 23 - los 12 lenguajes se aceptan en proyectos y selectores de archivos
+  ---
+  duration_ms: 0.72575
+  type: 'test'
+  ...
+# Subtest: importación de carpeta admite los nuevos lenguajes y omite archivos binarios
+ok 24 - importación de carpeta admite los nuevos lenguajes y omite archivos binarios
+  ---
+  duration_ms: 8.795725
+  type: 'test'
+  ...
+# Subtest: guardar en carpeta respeta extensión y contenido sin transformaciones
+ok 25 - guardar en carpeta respeta extensión y contenido sin transformaciones
+  ---
+  duration_ms: 0.863927
+  type: 'test'
+  ...
+# Subtest: editor mantiene CodeMirror 6 y utiliza importaciones diferidas para nuevos parsers
+ok 26 - editor mantiene CodeMirror 6 y utiliza importaciones diferidas para nuevos parsers
+  ---
+  duration_ms: 1.237438
+  type: 'test'
+  ...
+# Subtest: UI permite crear los 12 tipos y mantiene vista previa HTML aislada
+ok 27 - UI permite crear los 12 tipos y mantiene vista previa HTML aislada
+  ---
+  duration_ms: 0.452309
+  type: 'test'
+  ...
+# Subtest: Python usa 4 espacios y los demás respetan configuración general
+ok 28 - Python usa 4 espacios y los demás respetan configuración general
+  ---
+  duration_ms: 0.118358
+  type: 'test'
+  ...
+# Subtest: la vista previa tiene botones reales y origen aislado
+ok 29 - la vista previa tiene botones reales y origen aislado
+  ---
+  duration_ms: 0.753421
+  type: 'test'
+  ...
+# Subtest: el splash es adaptable, se anima y respeta movimiento reducido
+ok 30 - el splash es adaptable, se anima y respeta movimiento reducido
+  ---
+  duration_ms: 0.192449
+  type: 'test'
+  ...
+# Subtest: el proyecto inicial conecta HTML, CSS y JS
+ok 31 - el proyecto inicial conecta HTML, CSS y JS
+  ---
+  duration_ms: 2.44755
+  type: 'test'
+  ...
+# Subtest: rutas seguras y referencias relativas
+ok 32 - rutas seguras y referencias relativas
+  ---
+  duration_ms: 0.914142
+  type: 'test'
+  ...
+# Subtest: guarda archivos anidados dentro de una carpeta elegida
+ok 33 - guarda archivos anidados dentro de una carpeta elegida
+  ---
+  duration_ms: 0.539049
+  type: 'test'
+  ...
+# Subtest: un directorio se recorre y solo importa código soportado
+ok 34 - un directorio se recorre y solo importa código soportado
+  ---
+  duration_ms: 0.471067
+  type: 'test'
+  ...
+# Subtest: exporta ZIP con cabeceras correctas, nombres Unicode y contenido
+ok 35 - exporta ZIP con cabeceras correctas, nombres Unicode y contenido
+  ---
+  duration_ms: 0.923888
+  type: 'test'
+  ...
+# Subtest: Vite incluye páginas reales para editor, Learn, lecciones, manual y Sandbox
+ok 36 - Vite incluye páginas reales para editor, Learn, lecciones, manual y Sandbox
+  ---
+  duration_ms: 1.37814
+  type: 'test'
+  ...
+# Subtest: los 13 ejemplos aterrizan en Sandbox conservando el código original
+ok 37 - los 13 ejemplos aterrizan en Sandbox conservando el código original
+  ---
+  duration_ms: 1.263136
+  type: 'test'
+  ...
+# Subtest: Sandbox mantiene el código únicamente en memoria, con iframe aislado
+ok 38 - Sandbox mantiene el código únicamente en memoria, con iframe aislado
+  ---
+  duration_ms: 0.637838
+  type: 'test'
+  ...
+# Subtest: la academia abre Sandbox desde Copiar y desde Abrir ejemplo
+ok 39 - la academia abre Sandbox desde Copiar y desde Abrir ejemplo
+  ---
+  duration_ms: 0.205719
+  type: 'test'
+  ...
+# Subtest: cerrar proyecto exige copia real guardada o descargada
+ok 40 - cerrar proyecto exige copia real guardada o descargada
+  ---
+  duration_ms: 1.33828
+  type: 'test'
+  ...
+# Subtest: normaliza sesión y conserva orden, cursor y cambios pendientes
+ok 41 - normaliza sesión y conserva orden, cursor y cambios pendientes
+  ---
+  duration_ms: 1.535035
+  type: 'test'
+  ...
+# Subtest: rechaza versiones antiguas, nombres duplicados y rutas peligrosas
+ok 42 - rechaza versiones antiguas, nombres duplicados y rutas peligrosas
+  ---
+  duration_ms: 0.323946
+  type: 'test'
+  ...
+# Subtest: en modo archivos sueltos no acepta rutas internas
+ok 43 - en modo archivos sueltos no acepta rutas internas
+  ---
+  duration_ms: 0.115934
+  type: 'test'
+  ...
+# Subtest: guarda, recupera y elimina respaldos usando IndexedDB
+ok 44 - guarda, recupera y elimina respaldos usando IndexedDB
+  ---
+  duration_ms: 0.986441
+  type: 'test'
+  ...
+# Subtest: configuración predeterminada coherente
+ok 45 - configuración predeterminada coherente
+  ---
+  duration_ms: 1.017307
+  type: 'test'
+  ...
+# Subtest: valida parámetros para evitar valores inadecuados
+ok 46 - valida parámetros para evitar valores inadecuados
+  ---
+  duration_ms: 0.22022
+  type: 'test'
+  ...
+# Subtest: guarda y recupera preferencias a través de localStorage
+ok 47 - guarda y recupera preferencias a través de localStorage
+  ---
+  duration_ms: 0.398668
+  type: 'test'
+  ...
+# Subtest: recupera valores predeterminados cuando el almacenamiento falla
+ok 48 - recupera valores predeterminados cuando el almacenamiento falla
+  ---
+  duration_ms: 0.251968
+  type: 'test'
+  ...
+# Subtest: JSON muestra éxito y fallos con línea y columna
+ok 49 - JSON muestra éxito y fallos con línea y columna
+  ---
+  duration_ms: 1.724679
+  type: 'test'
+  ...
+# Subtest: XML detecta parsererror y valida documentos correctos con DOMParser inyectado
+ok 50 - XML detecta parsererror y valida documentos correctos con DOMParser inyectado
+  ---
+  duration_ms: 0.412179
+  type: 'test'
+  ...
+# Subtest: YAML comprueba errores, advertencias y claves duplicadas sin ejecutar código
+ok 51 - YAML comprueba errores, advertencias y claves duplicadas sin ejecutar código
+  ---
+  duration_ms: 0.348874
+  type: 'test'
+  ...
+# Subtest: comentarios por lenguaje se agregan y eliminan sin afectar otras líneas
+ok 52 - comentarios por lenguaje se agregan y eliminan sin afectar otras líneas
+  ---
+  duration_ms: 0.780312
+  type: 'test'
+  ...
+# Subtest: comentarios de HTML, CSS, XML y Markdown envuelven y desenvuelven bloques
+ok 53 - comentarios de HTML, CSS, XML y Markdown envuelven y desenvuelven bloques
+  ---
+  duration_ms: 0.315364
+  type: 'test'
+  ...
+# Subtest: JSON sin comentarios y tipos desconocidos no reciben modificaciones
+ok 54 - JSON sin comentarios y tipos desconocidos no reciben modificaciones
+  ---
+  duration_ms: 0.135864
+  type: 'test'
+  ...
+# Subtest: formateador conserva lenguajes existentes y añade TypeScript, JSON, SCSS, Markdown y YAML
+ok 55 - formateador conserva lenguajes existentes y añade TypeScript, JSON, SCSS, Markdown y YAML
+  ---
+  duration_ms: 0.720241
+  type: 'test'
+  ...
+# Subtest: UI y editor ofrecen comprobaciones, comentario, plegado y navegación a error
+ok 56 - UI y editor ofrecen comprobaciones, comentario, plegado y navegación a error
+  ---
+  duration_ms: 1.503417
+  type: 'test'
+  ...
+# Subtest: autocompletado añade plantillas sin sustituir CodeMirror
+ok 57 - autocompletado añade plantillas sin sustituir CodeMirror
+  ---
+  duration_ms: 0.393941
+  type: 'test'
+  ...
+# Subtest: los identificadores de controles de Fase 2 existen y no se duplican
+ok 58 - los identificadores de controles de Fase 2 existen y no se duplican
+  ---
+  duration_ms: 1.143517
+  type: 'test'
+  ...
+# Subtest: todas las acciones HTML tienen manejador en el código
+ok 59 - todas las acciones HTML tienen manejador en el código
+  ---
+  duration_ms: 1.855325
+  type: 'test'
+  ...
+# Subtest: se conservan menús y botones principales, con brillo rojo al pasar el cursor
+ok 60 - se conservan menús y botones principales, con brillo rojo al pasar el cursor
+  ---
+  duration_ms: 0.136024
+  type: 'test'
+  ...
+# Subtest: cinco temas configurables con fallback
+ok 61 - cinco temas configurables con fallback
+  ---
+  duration_ms: 0.655524
+  type: 'test'
+  ...
+# Subtest: interfaz ofrece formato, dispositivos, auto y consola
+ok 62 - interfaz ofrece formato, dispositivos, auto y consola
+  ---
+  duration_ms: 1.898079
+  type: 'test'
+  ...
+# Subtest: vista previa mantiene aislamiento y captura logs
+ok 63 - vista previa mantiene aislamiento y captura logs
+  ---
+  duration_ms: 0.305969
+  type: 'test'
+  ...
+# Subtest: learn tiene menu principal con tres opciones
+ok 64 - learn tiene menu principal con tres opciones
+  ---
+  duration_ms: 0.729525
+  type: 'test'
+  ...
+# Subtest: lecciones y manual existen como paginas separadas
+ok 65 - lecciones y manual existen como paginas separadas
+  ---
+  duration_ms: 0.110306
+  type: 'test'
+  ...
+# Subtest: angelical water usa nuevo celeste y línea activa visible
+ok 66 - angelical water usa nuevo celeste y línea activa visible
+  ---
+  duration_ms: 0.108754
+  type: 'test'
+  ...
+# Subtest: Manual tiene todas las secciones con ejemplos válidos
+ok 67 - Manual tiene todas las secciones con ejemplos válidos
+  ---
+  duration_ms: 0.685469
+  type: 'test'
+  ...
+# Subtest: Favicon original, logo nuevo y estilo temprano en páginas
+ok 68 - Favicon original, logo nuevo y estilo temprano en páginas
+  ---
+  duration_ms: 1.447874
+  type: 'test'
+  ...
+# Subtest: modal de salida ofrece tres decisiones y cancelación sin perder trabajo
+ok 69 - modal de salida ofrece tres decisiones y cancelación sin perder trabajo
+  ---
+  duration_ms: 2.182276
+  type: 'test'
+  ...
+# Subtest: bienvenida anima caracteres sin interferir, respeta preferencias de movimiento
+ok 70 - bienvenida anima caracteres sin interferir, respeta preferencias de movimiento
+  ---
+  duration_ms: 0.636495
+  type: 'test'
+  ...
+# Subtest: las 4 pantallas muestran barra de carga desde el primer fotograma
+ok 71 - las 4 pantallas muestran barra de carga desde el primer fotograma
+  ---
+  duration_ms: 2.229102
+  type: 'test'
+  ...
+# Subtest: la ruta de carga de Learn también funciona en Lecciones y Manual
+ok 72 - la ruta de carga de Learn también funciona en Lecciones y Manual
+  ---
+  duration_ms: 0.305228
+  type: 'test'
+  ...
+# Subtest: el menú de Learn ofrece dos tarjetas accesibles, regreso separado y lluvia de código
+ok 73 - el menú de Learn ofrece dos tarjetas accesibles, regreso separado y lluvia de código
+  ---
+  duration_ms: 0.422224
+  type: 'test'
+  ...
+1..73
+# tests 73
+# suites 0
+# pass 73
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 363.117012

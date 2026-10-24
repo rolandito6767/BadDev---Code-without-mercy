@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090909" />
+    <meta name="description" content="BadDev Learn Without Mercy: lecciones simples y prácticas para aprender a programar." />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <title>BadDev — Lecciones</title>
+    <style id="boot-critical">
+      html,body{margin:0;min-height:100%;background:#090909;color:#f5f5f5;font-family:system-ui,Arial,sans-serif}
+      img{max-width:100%;height:auto}
+      #startup-splash,#learn-splash{position:fixed;inset:0;z-index:9999;background:#090909;display:grid;place-items:center;overflow:hidden;opacity:1;visibility:visible}
+      #startup-splash[hidden],#learn-splash[hidden]{display:none!important}
+      #startup-splash .splash-content,#learn-splash .learn-splash-inner{box-sizing:border-box;width:min(92vw,620px);max-height:94vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+      #startup-splash .splash-logo-frame{width:min(74vw,390px);height:min(30vh,215px);display:flex;align-items:center;justify-content:center}
+      #startup-splash .splash-logo-frame img{display:block;width:100%;height:100%;object-fit:contain;border-radius:15px}
+      #learn-splash .learn-splash-inner>img{display:block;width:min(68vw,350px);max-height:27vh;object-fit:contain;border-radius:16px}
+      #startup-splash h2,#learn-splash h1{font:800 clamp(27px,5vw,45px)/1.12 system-ui,Arial,sans-serif;margin:12px 0;letter-spacing:-.025em}
+      #startup-splash h2 span,#learn-splash h1 span{color:#ff1744}
+      #startup-splash p,#learn-splash p{font:600 12px/1.5 system-ui,sans-serif;letter-spacing:.12em;color:#ac8791}
+      #startup-splash button,#learn-splash button{font:600 12px system-ui,sans-serif;padding:11px 17px;color:#f5f5f5;border:1px solid #632031;border-radius:9px;background:#211015;cursor:pointer}
+      #startup-splash .splash-line,#learn-splash .splash-progress{width:min(66vw,280px);height:4px;background:#401721;overflow:hidden;margin:22px auto 17px;border-radius:99px;flex-shrink:0}
+      #startup-splash .splash-line>span,#learn-splash .splash-progress>span{display:block!important;width:100%!important;height:100%!important;background:#ff1744;box-shadow:0 0 15px #ff174477;transform:scaleX(0);transform-origin:left center;animation:baddevBootFill 3.35s linear both!important}
+      @keyframes baddevBootFill{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+      #startup-splash.is-leaving,#learn-splash.is-leaving{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .38s ease,visibility .38s}
+      @media(prefers-reduced-motion:reduce){#startup-splash .splash-line>span,#learn-splash .splash-progress>span{animation:none!important;transform:scaleX(1)}#startup-splash.is-leaving,#learn-splash.is-leaving{transition:none}}
+    </style>
+    <link rel="stylesheet" href="/src/learn.css" />
+    <link rel="preload" as="image" href="%BASE_URL%baddev-logo-v12.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#lesson-content">Ir a la lección</a>
+    <div class="learn-splash" id="learn-splash" role="status" aria-label="Cargando lecciones">
+      <div class="learn-splash-inner">
+        <img src="%BASE_URL%baddev-logo-v12.svg" alt="Logo de BadDev" />
+        <p class="small-tag">BADDEV / LEARN WITHOUT MERCY</p>
+        <h1>LECCIONES<span>.</span></h1>
+        <p class="splash-subtitle">Aprende paso a paso.</p>
+        <div class="splash-progress" aria-hidden="true"><span></span></div>
+        <button id="skip-learn-splash" class="subtle-button" type="button">Entrar ahora →</button>
+      </div>
+    </div>
+    <div class="learn-app learn-page-lessons">
+      <header class="learn-top">
+        <div class="learn-brand" aria-label="BadDev Learn">
+          <img src="%BASE_URL%baddev-logo-v12.svg" alt="" />
+          <div><strong>Bad<span>Dev</span></strong><small>LECCIONES · LEARN WITHOUT MERCY.</small></div>
+        </div>
+        <div class="learn-top-actions">
+          <span id="learn-version" class="version-badge">V 1.2</span>
+          <a class="button button-secondary" href="./learn.html">← Menú Learn</a>
+      <a id="language-back" class="button button-secondary language-back-control" href="./lessons.html" hidden>← Elegir lenguaje</a>
+        </div>
+      </header>
+      <section id="language-chooser" class="learn-language-chooser" aria-label="Seleccionar lenguaje"></section>
+      <section id="language-intro" class="language-intro-page" hidden aria-label="Introducción del lenguaje"></section>
+      <div class="learn-layout simple-layout" id="course-layout" hidden>
+        <aside class="learn-sidebar" aria-label="Ruta de aprendizaje">
+          <div class="route-heading"><span class="small-tag">LECCIONES</span><h2>Ruta simple</h2><p>Ve paso a paso. Menos texto, más claridad.</p></div>
+          <div class="progress-card">
+            <div class="progress-meta"><strong>Tu progreso</strong><output id="progress-count">0/13</output></div>
+            <div class="progress-track" role="progressbar" aria-label="Progreso de lecciones" aria-valuemin="0" aria-valuemax="13" aria-valuenow="0" id="progress-track"><span id="progress-fill"></span></div>
+            <p>Guardado local en este navegador.</p>
+          </div>
+          <nav id="learn-navigation" aria-label="Lecciones" class="learn-nav"></nav>
+          <button type="button" id="reset-progress" class="subtle-button reset-button">Reiniciar progreso</button>
+        </aside>
+        <main class="learn-main" id="lesson-content" tabindex="-1">
+          <div class="learn-intro-strip"><span class="signal-dot"></span><span>BADDEV / LECCIONES</span><span id="section-tag">COMIENZA AQUÍ</span></div>
+          <article id="lesson-article" class="lesson-article" aria-live="polite"></article>
+          <div class="bottom-nav">
+            <button class="button button-secondary" id="previous-lesson" type="button">← Anterior</button>
+            <button class="button button-primary" id="next-lesson" type="button">Siguiente →</button>
+          </div>
+          <footer class="learn-footer">BADDEV · LECCIONES · <span id="footer-version">V 1.0.2</span></footer>
+        </main>
+      </div>
+    </div>
+    <div class="toast" id="learn-toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/learn-main.js"></script>
+  </body>
+</html>

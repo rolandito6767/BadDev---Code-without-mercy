@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090909" />
+    <meta name="description" content="BadDev Learn Without Mercy: menú principal para lecciones y manual teórico." />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <title>BadDev — LEARN WITHOUT MERCY</title>
+    <style id="boot-critical">
+      html,body{margin:0;min-height:100%;background:#090909;color:#f5f5f5;font-family:system-ui,Arial,sans-serif}
+      img{max-width:100%;height:auto}
+      #startup-splash,#learn-splash{position:fixed;inset:0;z-index:9999;background:#090909;display:grid;place-items:center;overflow:hidden;opacity:1;visibility:visible}
+      #startup-splash[hidden],#learn-splash[hidden]{display:none!important}
+      #startup-splash .splash-content,#learn-splash .learn-splash-inner{box-sizing:border-box;width:min(92vw,620px);max-height:94vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+      #startup-splash .splash-logo-frame{width:min(74vw,390px);height:min(30vh,215px);display:flex;align-items:center;justify-content:center}
+      #startup-splash .splash-logo-frame img{display:block;width:100%;height:100%;object-fit:contain;border-radius:15px}
+      #learn-splash .learn-splash-inner>img{display:block;width:min(68vw,350px);max-height:27vh;object-fit:contain;border-radius:16px}
+      #startup-splash h2,#learn-splash h1{font:800 clamp(27px,5vw,45px)/1.12 system-ui,Arial,sans-serif;margin:12px 0;letter-spacing:-.025em}
+      #startup-splash h2 span,#learn-splash h1 span{color:#ff1744}
+      #startup-splash p,#learn-splash p{font:600 12px/1.5 system-ui,sans-serif;letter-spacing:.12em;color:#ac8791}
+      #startup-splash button,#learn-splash button{font:600 12px system-ui,sans-serif;padding:11px 17px;color:#f5f5f5;border:1px solid #632031;border-radius:9px;background:#211015;cursor:pointer}
+      #startup-splash .splash-line,#learn-splash .splash-progress{width:min(66vw,280px);height:4px;background:#401721;overflow:hidden;margin:22px auto 17px;border-radius:99px;flex-shrink:0}
+      #startup-splash .splash-line>span,#learn-splash .splash-progress>span{display:block!important;width:100%!important;height:100%!important;background:#ff1744;box-shadow:0 0 15px #ff174477;transform:scaleX(0);transform-origin:left center;animation:baddevBootFill 3.35s linear both!important}
+      @keyframes baddevBootFill{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+      #startup-splash.is-leaving,#learn-splash.is-leaving{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .38s ease,visibility .38s}
+      @media(prefers-reduced-motion:reduce){#startup-splash .splash-line>span,#learn-splash .splash-progress>span{animation:none!important;transform:scaleX(1)}#startup-splash.is-leaving,#learn-splash.is-leaving{transition:none}}
+    </style>
+    <link rel="stylesheet" href="/src/learn.css" />
+    <link rel="preload" as="image" href="%BASE_URL%baddev-logo-v12.svg" />
+  </head>
+  <body>
+    <div class="learn-splash" id="learn-splash" role="status" aria-label="Iniciando Learn Without Mercy">
+      <div class="learn-splash-inner">
+        <img src="%BASE_URL%baddev-logo-v12.svg" alt="Diablito BadDev con símbolos de código" />
+        <p class="small-tag">BADDEV ACADEMY</p>
+        <h1>LEARN <span>WITHOUT MERCY.</span></h1>
+        <p class="splash-subtitle">Aprende sin prisa. Practica con intención.</p>
+        <div class="splash-progress" aria-hidden="true"><span></span></div>
+        <button id="skip-learn-splash" class="subtle-button" type="button">Entrar ahora →</button>
+      </div>
+    </div>
+
+    <main class="learn-home learn-home-v2" id="learn-home">
+      <div class="learn-code-rain" id="learn-code-rain" aria-hidden="true"></div>
+      <div class="learn-orbit" aria-hidden="true"></div>
+      <div class="learn-home-inner">
+        <div class="learn-home-topline">
+          <a class="learn-back-link" href="./index.html" aria-label="Volver a BadDev">← Regresar a BadDev</a>
+          <span id="learn-version" class="version-badge">V 1.0.2</span>
+        </div>
+        <header class="learn-hero">
+          <div class="learn-hero-art">
+            <img src="%BASE_URL%baddev-logo-v12.svg" alt="Emblema de BadDev con diablito rojo y signos de código" />
+          </div>
+          <div class="learn-hero-title">
+            <p class="small-tag">BADDEV / ACADEMY</p>
+            <h1>LEARN <span>WITHOUT MERCY.</span></h1>
+            <p>Dos formas de aprender. Elige tu camino.</p>
+          </div>
+        </header>
+        <nav class="learn-choice-grid" aria-label="Elige cómo aprender">
+          <a class="learn-choice-card learn-choice-lessons" href="./lessons.html">
+            <span class="learn-choice-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11v28M24 14c-5-3-12-5-19-3v26c8-2 14 0 19 3m0-26c5-3 12-5 19-3v26c-8-2-14 0-19 3"/><path d="M11 20h6m14 0h6M11 26h6m14 0h6"/></svg>
+            </span>
+            <span class="learn-choice-meta">01 / PRÁCTICA</span>
+            <strong>Lecciones</strong>
+            <span class="learn-choice-description">Aprende paso a paso y resuelve retos en Sandbox.</span>
+            <span class="learn-choice-arrow" aria-hidden="true">Explorar lecciones ↗</span>
+          </a>
+          <a class="learn-choice-card learn-choice-manual" href="./manual.html">
+            <span class="learn-choice-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h17l7 7v30H13z"/><path d="M30 5v9h8M20 22h11m-11 6h11m-11 6h8"/><path d="M6 13v26"/></svg>
+            </span>
+            <span class="learn-choice-meta">02 / LECTURA</span>
+            <strong>Leer Manual</strong>
+            <span class="learn-choice-description">Lee teoría clara con ejemplos, sin ejercicios.</span>
+            <span class="learn-choice-arrow" aria-hidden="true">Abrir manual ↗</span>
+          </a>
+        </nav>
+      </div>
+    </main>
+    <script type="module" src="/src/learn-home.js"></script>
+  </body>
+</html>

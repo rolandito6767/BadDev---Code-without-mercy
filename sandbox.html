@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="theme-color" content="#090909" />
+  <meta name="description" content="BadDev Sandbox — practica código sin guardar ni crear proyectos." />
+  <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+  <title>BadDev Sandbox · Práctica temporal</title>
+  <style id="boot-critical">html,body{margin:0;background:#090909;color:#f5f5f5}img{max-width:100%;height:auto}.sandbox-brand img{width:70px;height:42px;object-fit:contain;border-radius:6px}</style>
+  <link rel="preload" as="image" href="%BASE_URL%baddev-logo-v12.svg" />
+</head>
+<body>
+  <div class="sandbox-app">
+    <header class="sandbox-topbar">
+      <div class="sandbox-brand"><img src="%BASE_URL%baddev-logo-v12.svg" alt="BadDev" /><div><strong>BadDev <span>Sandbox</span></strong><small>LEARN WITHOUT MERCY · PRÁCTICA TEMPORAL</small></div></div>
+      <a id="return-lesson" class="sandbox-return" href="./lessons.html">← Regresar a lección</a>
+    </header>
+    <section class="sandbox-intro"><div><p class="sandbox-kicker">THE TESTING GROUND</p><h1 id="sandbox-title">Prueba tu código.</h1><p>Modifica el ejemplo, observa la vista previa y experimenta sin miedo. No necesitas guardar.</p></div><p class="sandbox-ephemeral">◉ Todo se descarta al salir</p></section>
+    <main class="sandbox-workspace">
+      <section class="sandbox-edit-pane" aria-label="Editor Sandbox">
+        <div class="sandbox-tabs" role="tablist" aria-label="Archivos temporales">
+          <button class="sandbox-tab" type="button" data-file="index.html" role="tab" aria-selected="true">&lt;&gt; HTML</button>
+          <button class="sandbox-tab" type="button" data-file="style.css" role="tab" aria-selected="false"># CSS</button>
+          <button class="sandbox-tab" type="button" data-file="script.js" role="tab" aria-selected="false">JS</button>
+        </div>
+        <div id="sandbox-editor" aria-label="Editor de código temporal"></div>
+      </section>
+      <section class="sandbox-preview-pane" aria-label="Vista previa Sandbox">
+        <div class="sandbox-preview-heading"><strong><span class="sandbox-live-dot"></span> VISTA PREVIA</strong><span>Actualización automática</span></div>
+        <iframe id="sandbox-frame" title="Vista previa de código aislada" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+        <div class="sandbox-diagnostics" aria-live="polite"><strong>Diagnósticos</strong><p id="sandbox-errors">Sin errores detectados.</p></div>
+      </section>
+    </main>
+    <footer class="sandbox-footer"><span>BadDev <span id="sandbox-version">V 1.0.2</span></span><span>Esta práctica no se guarda en el equipo ni en el navegador.</span><a id="footer-return" href="./lessons.html">Regresar a lección →</a></footer>
+  </div>
+  <script type="module" src="/src/sandbox-main.js"></script>
+</body>
+</html>

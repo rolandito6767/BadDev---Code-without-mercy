@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090909" />
+    <meta name="description" content="BadDev — Code without mercy. Editor local con centro de aprendizaje LEARN WITHOUT MERCY." />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <title>BadDev — Code without mercy.</title>
+    <style id="boot-critical">
+      html,body{margin:0;min-height:100%;background:#090909;color:#f5f5f5;font-family:system-ui,Arial,sans-serif}
+      img{max-width:100%;height:auto}
+      #startup-splash,#learn-splash{position:fixed;inset:0;z-index:9999;background:#090909;display:grid;place-items:center;overflow:hidden;opacity:1;visibility:visible}
+      #startup-splash[hidden],#learn-splash[hidden]{display:none!important}
+      #startup-splash .splash-content,#learn-splash .learn-splash-inner{box-sizing:border-box;width:min(92vw,620px);max-height:94vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+      #startup-splash .splash-logo-frame{width:min(74vw,390px);height:min(30vh,215px);display:flex;align-items:center;justify-content:center}
+      #startup-splash .splash-logo-frame img{display:block;width:100%;height:100%;object-fit:contain;border-radius:15px}
+      #learn-splash .learn-splash-inner>img{display:block;width:min(68vw,350px);max-height:27vh;object-fit:contain;border-radius:16px}
+      #startup-splash h2,#learn-splash h1{font:800 clamp(27px,5vw,45px)/1.12 system-ui,Arial,sans-serif;margin:12px 0;letter-spacing:-.025em}
+      #startup-splash h2 span,#learn-splash h1 span{color:#ff1744}
+      #startup-splash p,#learn-splash p{font:600 12px/1.5 system-ui,sans-serif;letter-spacing:.12em;color:#ac8791}
+      #startup-splash button,#learn-splash button{font:600 12px system-ui,sans-serif;padding:11px 17px;color:#f5f5f5;border:1px solid #632031;border-radius:9px;background:#211015;cursor:pointer}
+      #startup-splash .splash-line,#learn-splash .splash-progress{width:min(66vw,280px);height:4px;background:#401721;overflow:hidden;margin:22px auto 17px;border-radius:99px;flex-shrink:0}
+      #startup-splash .splash-line>span,#learn-splash .splash-progress>span{display:block!important;width:100%!important;height:100%!important;background:#ff1744;box-shadow:0 0 15px #ff174477;transform:scaleX(0);transform-origin:left center;animation:baddevBootFill 3.35s linear both!important}
+      @keyframes baddevBootFill{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+      #startup-splash.is-leaving,#learn-splash.is-leaving{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .38s ease,visibility .38s}
+      @media(prefers-reduced-motion:reduce){#startup-splash .splash-line>span,#learn-splash .splash-progress>span{animation:none!important;transform:scaleX(1)}#startup-splash.is-leaving,#learn-splash.is-leaving{transition:none}}
+    </style>
+    <link rel="preload" as="image" href="%BASE_URL%baddev-logo-v12.svg" />
+  </head>
+  <body>
+    <a href="#editor-stage" class="skip-link">Saltar al espacio de edición</a>
+    <div id="startup-splash" class="startup-splash" role="status" aria-label="Iniciando BadDev">
+      <div class="splash-content">
+        <div class="splash-glow" aria-hidden="true"></div>
+        <div class="splash-logo-frame"><img src="%BASE_URL%baddev-logo-v12.svg" alt="Logotipo completo de BadDev: diablito rojo con símbolos de código" /></div>
+        <h2>BAD<span>DEV</span></h2>
+        <p>CODE WITHOUT MERCY.</p>
+        <div class="splash-line" aria-hidden="true"><span></span></div>
+        <button class="splash-skip" id="skip-splash" type="button">Entrar ahora →</button>
+      </div>
+    </div>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="brand brand-home" type="button" data-action="home" title="Volver al inicio de BadDev" aria-label="Ir al menú principal de BadDev">
+            <img src="%BASE_URL%baddev-logo-v12.svg" alt="Diablito minimalista y símbolo de código menor y mayor" class="brand-logo" />
+            <div class="brand-copy">
+              <strong>Bad<span>Dev</span></strong>
+              <small>CODE WITHOUT MERCY.</small>
+            </div>
+          </button>
+          <nav class="menubar" aria-label="Menú principal">
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="file" aria-expanded="false" aria-haspopup="true">Archivo <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="file" hidden>
+                <button data-action="new">Nuevo archivo <kbd>Ctrl+N</kbd></button>
+                <button data-action="new-project">Nuevo proyecto</button>
+                <button data-action="open-folder">Abrir carpeta / proyecto</button>
+                <button data-action="import-folder">Importar carpeta (alternativa)</button>
+                <button data-action="open">Abrir archivos <kbd>Ctrl+O</kbd></button>
+                <span class="menu-rule"></span>
+                <button data-action="save">Guardar <kbd>Ctrl+S</kbd></button>
+                <button data-action="save-as">Guardar como...</button>
+                <button data-action="save-project">Guardar proyecto en carpeta</button>
+                <button data-action="export-zip">Descargar proyecto ZIP</button>
+                <span class="menu-rule"></span>
+                <button data-action="close-project">Cerrar proyecto y volver al menú</button>
+                <button data-action="recover-backup">Recuperar respaldo local (emergencia)</button>
+                <span class="menu-rule"></span>
+                <button data-action="close">Cerrar pestaña <kbd>Ctrl+W</kbd></button>
+              </div>
+            </div>
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="edit" aria-expanded="false" aria-haspopup="true">Editar <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="edit" hidden>
+                <button data-action="undo">Deshacer <kbd>Ctrl+Z</kbd></button>
+                <button data-action="redo">Rehacer <kbd>Ctrl+Y</kbd></button>
+                <span class="menu-rule"></span>
+                <button data-action="find">Buscar <kbd>Ctrl+F</kbd></button>
+                <button data-action="replace">Buscar y reemplazar <kbd>Ctrl+H</kbd></button>
+                <button data-action="format">Ordenar código (Prettier)</button>
+                <button data-action="check-syntax">Comprobar JSON / XML / YAML</button>
+                <span class="menu-rule"></span>
+                <button data-action="comment">Comentar / descomentar <kbd>Ctrl+/</kbd></button>
+                <button data-action="fold-block">Contraer bloque</button>
+                <button data-action="unfold-block">Expandir bloque</button>
+              </div>
+            </div>
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="view" aria-expanded="false" aria-haspopup="true">Ver <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="view" hidden>
+                <button data-action="toggle-sidebar" id="sidebar-menu-item">Ocultar explorador</button>
+                <button data-action="format">Ordenar código</button>
+                <button data-action="check-syntax">Comprobar sintaxis</button>
+                <button data-action="toggle-preview" id="preview-menu-item">Mostrar vista previa</button>
+                <button data-action="settings">Configuración del editor</button>
+              </div>
+            </div>
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="help" aria-expanded="false" aria-haspopup="true">Ayuda <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="help" hidden>
+                <button data-action="learn">¿Nuevo en esto? — Learn</button>
+                <button data-action="shortcuts">Atajos disponibles</button>
+                <button data-action="about">Acerca de BadDev</button>
+              </div>
+            </div>
+          </nav>
+        </div>
+        <div class="topbar-actions">
+          <span class="phase-chip" id="version-chip">V 1.2 <span class="online-dot"></span></span>
+          <button class="btn btn-quiet top-open" data-action="open-folder" title="Abrir carpeta de proyecto">Carpeta</button>
+          <button class="btn btn-outline top-close-project" data-action="close-project" title="Cerrar proyecto guardado y volver al menú">Cerrar proyecto</button>
+          <button class="btn btn-outline top-preview" data-action="toggle-preview" aria-pressed="false" title="Mostrar u ocultar la vista previa">▶ Vista previa</button>
+          <button class="icon-button top-settings" data-action="settings" title="Configuración del editor" aria-label="Configuración del editor">⚙</button>
+          <button class="btn btn-primary" data-action="save" title="Guardar el archivo actual (Ctrl+S)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h13l3 3v13H4zM7 4v6h9V4M8 20v-7h8v7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            Guardar
+          </button>
+        </div>
+      </header>
+
+      <div class="workspace" id="workspace">
+        <aside class="sidebar" id="sidebar" aria-label="Explorador de archivos">
+          <div class="sidebar-title"><span class="sidebar-heading">EXPLORADOR</span><span class="sidebar-count" id="file-count">0</span></div>
+          <div class="project-banner">
+            <div class="project-banner-info"><span class="project-label">PROYECTO ACTUAL</span><strong id="project-name">Archivos sueltos</strong></div>
+            <button type="button" id="project-close-button" class="icon-button project-close-button" data-action="close-project" title="Cerrar proyecto completo y volver al menú" aria-label="Cerrar proyecto completo" hidden>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <button class="icon-button" data-action="new-project" title="Nuevo proyecto HTML, CSS y JS" aria-label="Nuevo proyecto">+</button>
+            <button class="icon-button" data-action="open-folder" title="Abrir carpeta de proyecto" aria-label="Abrir carpeta">▣</button>
+          </div>
+          <div class="side-section">
+            <div class="side-section-heading">ARCHIVOS ABIERTOS
+              <div class="side-section-actions">
+                <button class="icon-button" data-action="new" title="Nuevo archivo (Ctrl+N)" aria-label="Nuevo archivo">+
+                </button>
+                <button class="icon-button" data-action="open" title="Abrir archivos (Ctrl+O)" aria-label="Abrir archivos">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7V5h7l2 2h9v12H3zM7 13h10M12 9v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="file-tools">
+              <label class="file-filter-label" for="file-filter">Filtrar archivos abiertos</label>
+              <input id="file-filter" class="file-filter" type="search" placeholder="⌕ Buscar archivo..." aria-label="Filtrar archivos abiertos" autocomplete="off" />
+              <button class="icon-button sort-button" id="sort-button" data-action="sort-files" title="Ordenar archivos por nombre" aria-label="Ordenar archivos por nombre">⇅</button>
+            </div>
+            <div id="file-list" class="file-list" role="list" aria-label="Archivos abiertos"></div>
+            <p id="filter-empty" class="empty-sidebar" hidden>Ningún archivo coincide con la búsqueda.</p>
+            <p id="empty-sidebar" class="empty-sidebar">Todavía no hay archivos abiertos.</p>
+          </div>
+          <div class="sidebar-bottom" id="sidebar-tip" aria-label="Consejos de BadDev">
+            <div class="sidebar-tip-icon" aria-hidden="true">✦</div>
+            <p class="sidebar-tip-content" id="sidebar-tip-content"><strong id="sidebar-tip-title">Tu espacio creativo.</strong><span id="sidebar-tip-description">Trabaja con carpetas y archivos relacionados. Puedes exportar tu proyecto en ZIP.</span></p>
+            <div class="sidebar-tip-pips" id="sidebar-tip-pips" aria-hidden="true"><span class="is-active"></span><span></span><span></span></div>
+          </div>
+        </aside>
+
+        <main class="main-panel">
+          <div class="tabs-bar" id="tabs-bar" aria-label="Pestañas de archivos">
+            <div id="tabs" class="tabs" role="tablist" aria-label="Pestañas abiertas"></div>
+            <button id="python-quick-run" class="btn python-quick-run" data-action="run-python" hidden title="Ejecutar Python en BadDev">▶ Python</button>
+            <button id="tab-add" class="tabs-add" data-action="new" title="Crear una pestaña nueva" aria-label="Crear archivo nuevo">+</button>
+            <div class="tabs-spacer"></div>
+            <button class="icon-button tabs-tool" data-action="find" title="Buscar en el archivo (Ctrl+F)" aria-label="Buscar texto">⌕</button>
+            <button class="icon-button tabs-tool" data-action="format" title="Ordenar código" aria-label="Ordenar código">{ }</button>
+            <button class="icon-button tabs-tool" data-action="replace" title="Buscar y reemplazar (Ctrl+H)" aria-label="Buscar y reemplazar">⇄</button>
+            <button class="icon-button tabs-tool" data-action="toggle-preview" title="Vista previa del proyecto" aria-label="Vista previa">◧</button>
+            <span class="workspace-label">BADDEV / WORKSPACE</span>
+          </div>
+
+          <section class="editor-stage" id="editor-stage">
+            <div id="welcome" class="welcome">
+              <div class="code-rain" id="code-rain" aria-hidden="true"></div>
+              <div class="welcome-halo" aria-hidden="true"></div>
+              <div class="welcome-content">
+                <div class="welcome-mark"><img src="%BASE_URL%baddev-logo-v12.svg" alt="Logo BadDev" /></div>
+                <div class="welcome-eyebrow"><span class="tiny-red-line"></span> THE CODE STARTS HERE <span class="hero-caret" aria-hidden="true"></span></div>
+                <h1>Make something <em>dangerous.</em></h1>
+                <p>Un espacio sin distracciones para escribir en 12 lenguajes y tecnologías. Todo empieza con una línea de código.</p>
+                <div class="welcome-actions">
+                  <button class="btn btn-primary btn-large" data-action="new-project">+ Nuevo proyecto</button>
+                  <button class="btn btn-outline btn-large" data-action="open-folder">Abrir proyecto</button>
+                  <button class="btn btn-quiet btn-large" data-action="new">Archivo suelto</button>
+                  <button class="btn btn-outline btn-large welcome-learn" data-action="learn" title="Abrir la guía BadDev Learn">¿Nuevo en esto? ↗</button>
+                </div>
+                <p class="welcome-workflow">Para continuar otro día, guarda tu proyecto en una carpeta o descarga el ZIP. Al volver a BadDev, usa <strong>Abrir proyecto</strong>.</p>
+                <div class="welcome-hint"><span class="keycap">Ctrl</span><span class="plus-sign">+</span><span class="keycap">N</span> para comenzar desde cero</div>
+              </div>
+              <div class="welcome-decor" aria-hidden="true"><span>V 1.2</span><span>12 LENGUAJES / LEARN</span></div>
+            </div>
+            <div id="editor-host" class="editor-host" hidden aria-label="Editor de código"></div>
+            <aside id="preview-panel" class="preview-panel" hidden aria-label="Vista previa aislada">
+              <div class="preview-toolbar">
+                <div class="preview-heading"><span class="preview-live-dot"></span><strong>VISTA PREVIA</strong></div>
+                <select id="preview-size" aria-label="Tamaño de vista previa" title="Dispositivo"><option value="desktop">Escritorio</option><option value="tablet">Tablet</option><option value="mobile">Móvil</option></select>
+                <label class="auto-preview-label"><input id="preview-auto" type="checkbox" /> Auto</label>
+                <select id="preview-entry" title="Archivo compatible a visualizar" aria-label="Archivo compatible a visualizar"></select>
+                <button class="icon-button" data-action="refresh-preview" title="Actualizar vista previa" aria-label="Actualizar vista previa">↻</button>
+                <button class="icon-button" data-action="detach-preview" title="Abrir vista previa en nueva pestaña" aria-label="Abrir en nueva pestaña">↗</button>
+                <button class="icon-button" data-action="toggle-preview" title="Cerrar vista previa" aria-label="Cerrar vista previa">×</button>
+              </div>
+              <section id="python-panel" class="python-panel" hidden aria-label="Consola Python">
+                <div class="python-title-row"><span class="python-dot"></span><strong>PYTHON / BADDEV</strong><span id="python-status" role="status" aria-live="polite">Elige un motor y pulsa Ejecutar.</span></div>
+                <div class="python-engines"><label for="python-engine">Ejecutar con</label>
+                  <select id="python-engine" aria-label="Motor Python"><option value="browser">Navegador · Pyodide</option><option value="local">Windows · Python local</option></select>
+                  <button id="python-run" type="button" class="btn btn-primary" title="Ejecutar el archivo Python seleccionado">▶ Ejecutar</button>
+                  <button id="python-stop" type="button" class="btn btn-outline" title="Detener ejecución Python" disabled>■ Detener</button>
+                </div>
+                <p id="python-engine-help" class="python-engine-help">Pyodide ejecuta Python en el navegador. Primera carga: Internet necesario. No tiene acceso directo a tus archivos de Windows.</p>
+                <label for="python-input" class="python-input-label">Entrada para input() (opcional, una respuesta por línea)</label>
+                <textarea id="python-input" rows="2" placeholder="Escribe aquí las respuestas para input()…" spellcheck="false"></textarea>
+                <pre id="python-output" class="python-output" role="log" aria-live="polite">La salida de print() aparecerá aquí. Python no se ejecuta automáticamente.</pre>
+                <p class="python-security">Python local se habilita únicamente cuando inicias <code>npm run python:bridge</code>. Ejecuta solo código que comprendas o provenga de fuentes confiables.</p>
+              </section>
+              <iframe id="preview-frame" title="Visualizar archivos compatibles en entorno aislado" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+              <div class="preview-console"><div class="preview-console-title">CONSOLA / DIAGNÓSTICOS / AVISOS <span id="preview-error-count">0</span> <button id="clear-errors" type="button" data-action="clear-errors">Limpiar</button></div>
+                <div id="preview-errors" class="preview-errors" role="log" aria-live="polite"><p>Sin errores detectados.</p></div>
+              </div>
+            </aside>
+          </section>
+
+          <footer class="statusbar" aria-label="Estado del editor">
+            <div class="status-left"><span class="status-brand-dot"></span><span id="status-save" aria-live="polite">Listo para crear</span><span class="status-separator"></span><span id="status-file">Sin archivo</span></div>
+            <div class="status-right"><span id="backup-status" class="backup-status" title="Respaldo de emergencia. No equivale a guardar en Windows y no se restaura automáticamente." aria-live="polite">Guarda o exporta tu proyecto</span><span class="status-separator"></span><span id="status-pos">Ln —, Col —</span><span class="status-separator"></span><span id="status-lang">—</span><span class="status-separator"></span><span id="status-indent">Espacios: 2</span><span class="status-separator"></span><span class="status-version" id="status-version">BadDev V 1.2</span></div>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <dialog id="new-project-dialog" class="app-dialog" aria-labelledby="new-project-title">
+      <form id="new-project-form" class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">NEW PROJECT</span><button type="button" class="modal-close" data-action="cancel-project" aria-label="Cerrar">×</button></div>
+        <h2 id="new-project-title">Nuevo proyecto web</h2>
+        <p>Se crearán index.html, style.css y script.js listos para usar.</p>
+        <label for="new-project-name">Nombre del proyecto</label>
+        <input id="new-project-name" maxlength="70" value="Mi proyecto BadDev" required />
+        <p id="new-project-hint" class="field-hint">Luego podrás guardarlo en una carpeta o descargar su ZIP.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="cancel-project">Cancelar</button><button type="submit" class="btn btn-primary">Crear proyecto</button></div>
+      </form>
+    </dialog>
+    <dialog id="new-file-dialog" class="app-dialog" aria-labelledby="new-file-title">
+      <form id="new-file-form" class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">NEW FILE</span><button type="button" class="modal-close" data-action="cancel-new" aria-label="Cerrar">×</button></div>
+        <h2 id="new-file-title">Crear un archivo</h2>
+        <p>Elige el lenguaje y crea tu archivo. La vista previa de esta etapa funciona con HTML, Markdown, JSON y TypeScript.</p>
+        <label for="new-file-type">Lenguaje</label>
+        <select id="new-file-type" name="type"><option value="html">HTML</option><option value="css">CSS</option><option value="js">JavaScript</option><option value="ts">TypeScript</option><option value="py">Python</option><option value="php">PHP</option><option value="json">JSON</option><option value="md">Markdown</option><option value="sql">SQL</option><option value="scss">SCSS</option><option value="xml">XML</option><option value="yaml">YAML</option><option value="txt">Texto</option></select>
+        <label for="new-file-name">Nombre del archivo</label>
+        <input id="new-file-name" name="filename" maxlength="100" value="index.html" spellcheck="false" required />
+        <p class="field-hint" id="new-file-hint">Los archivos sin guardar aparecen con un punto rojo.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="cancel-new">Cancelar</button><button type="submit" class="btn btn-primary">Crear archivo</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="rename-dialog" class="app-dialog" aria-labelledby="rename-title">
+      <form id="rename-form" class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">RENAME FILE</span><button type="button" class="modal-close" data-action="cancel-rename" aria-label="Cerrar">×</button></div>
+        <h2 id="rename-title">Renombrar archivo</h2>
+        <p>El nuevo nombre cambia la pestaña de BadDev. Si tenía un archivo guardado en el equipo, guardarás una copia con el nuevo nombre.</p>
+        <label for="rename-name">Nombre nuevo</label>
+        <input id="rename-name" maxlength="100" spellcheck="false" required />
+        <p class="field-hint" id="rename-hint">Elige una extensión compatible con BadDev.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="cancel-rename">Cancelar</button><button type="submit" class="btn btn-primary">Renombrar</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="settings-dialog" class="app-dialog" aria-labelledby="settings-title">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">EDITOR SETTINGS</span><button type="button" class="modal-close" data-action="close-settings" aria-label="Cerrar">×</button></div>
+        <h2 id="settings-title">Personalizar editor</h2>
+        <p>Los cambios se aplican al instante y se recuerdan en este navegador. Las pestañas abiertas se respaldan automáticamente aquí, sin modificar archivos de Windows.</p>
+        <label for="theme-select">Tema de BadDev</label>
+        <select id="theme-select"><option value="demon">Demon Red</option><option value="purple">Inferno Purple</option><option value="green">Toxic Green</option><option value="angel">Angelical Water</option><option value="slayer">Dev Slayer</option></select>
+        <label for="font-size">Tamaño de letra: <output id="font-value" for="font-size">14 px</output></label>
+        <input id="font-size" type="range" min="12" max="22" step="1" value="14" />
+        <label for="tab-size">Espacios para la indentación</label>
+        <select id="tab-size"><option value="2">2 espacios</option><option value="4">4 espacios</option></select>
+        <label class="settings-check" for="word-wrap"><input id="word-wrap" type="checkbox" /> Ajustar las líneas largas al ancho de la ventana</label>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="reset-settings">Restablecer</button><button type="button" class="btn btn-primary" data-action="close-settings">Listo</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="info-dialog" class="app-dialog" aria-labelledby="info-title">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">BADDEV / INFO</span><button type="button" class="modal-close" data-action="close-info" aria-label="Cerrar">×</button></div>
+        <h2 id="info-title">BadDev</h2>
+        <div id="info-content" class="info-content"></div>
+        <div class="dialog-actions"><button type="button" class="btn btn-primary" data-action="close-info">Entendido</button></div>
+      </div>
+    </dialog>
+
+
+    <dialog id="diagnostics-dialog" class="app-dialog diagnostics-dialog" aria-labelledby="diagnostics-title">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">BADDEV / SINTAXIS</span><button type="button" class="modal-close" data-action="close-diagnostics" aria-label="Cerrar diagnósticos">×</button></div>
+        <h2 id="diagnostics-title">Comprobación de sintaxis</h2>
+        <p id="diagnostics-name" class="field-hint">Selecciona JSON, XML o YAML.</p>
+        <div id="diagnostics-list" class="diagnostics-list" role="list" aria-live="polite"></div>
+        <p class="field-hint">Pulsa un error para ir a la línea. No se ejecuta el contenido del archivo.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-primary" data-action="close-diagnostics">Cerrar</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="unsaved-dialog" class="app-dialog unsaved-dialog" aria-labelledby="unsaved-title" aria-describedby="unsaved-description">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">BADDEV / PROTEGER TU TRABAJO</span><button type="button" id="unsaved-cancel" class="modal-close" aria-label="Cancelar cierre">×</button></div>
+        <h2 id="unsaved-title">¿Guardar antes de salir?</h2>
+        <p id="unsaved-description">Tienes cambios sin guardar. Guarda tu archivo en un proyecto o elige descartarlo.</p>
+        <p id="unsaved-error" class="field-hint" role="status" aria-live="polite"></p>
+        <div class="unsaved-options">
+          <button type="button" id="unsaved-save-folder" class="btn btn-primary">Guardar en…</button>
+          <button type="button" id="unsaved-save-as" class="btn btn-outline">Guardar como…</button>
+          <button type="button" id="unsaved-discard" class="btn unsaved-discard">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true"><path d="M12 20.5 4.1 12.7C-1 7.8 5.1 0.9 10.3 5.7l1.7 1.6 1.7-1.6C18.9 0.9 25 7.8 19.9 12.7L12 20.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m13.5 3.4-3.2 6.1 3.5 1.4-3.1 5.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            No guardar
+          </button>
+        </div>
+        <button type="button" class="unsaved-back" id="unsaved-back">Cancelar, seguir editando</button>
+      </div>
+    </dialog>
+    <input type="file" id="native-folder-input" webkitdirectory directory multiple hidden />
+    <input type="file" id="native-file-input" accept=".html,.htm,.css,.js,.mjs,.ts,.py,.php,.json,.md,.sql,.scss,.xml,.yaml,.yml,.txt" multiple hidden />
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

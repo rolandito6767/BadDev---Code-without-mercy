@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090909" />
+    <meta name="description" content="BadDev — Code without mercy. Editor local con centro de aprendizaje LEARN WITHOUT MERCY." />
+    <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
+    <title>BadDev — Code without mercy.</title>
+    <style id="boot-critical">
+      html,body{margin:0;min-height:100%;background:#090909;color:#f5f5f5;font-family:system-ui,Arial,sans-serif}
+      img{max-width:100%;height:auto}
+      #startup-splash,#learn-splash{position:fixed;inset:0;z-index:9999;background:#090909;display:grid;place-items:center;overflow:hidden;opacity:1;visibility:visible}
+      #startup-splash[hidden],#learn-splash[hidden]{display:none!important}
+      #startup-splash .splash-content,#learn-splash .learn-splash-inner{box-sizing:border-box;width:min(92vw,620px);max-height:94vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+      #startup-splash .splash-logo-frame{width:min(74vw,390px);height:min(30vh,215px);display:flex;align-items:center;justify-content:center}
+      #startup-splash .splash-logo-frame img{display:block;width:100%;height:100%;object-fit:contain;border-radius:15px}
+      #learn-splash .learn-splash-inner>img{display:block;width:min(68vw,350px);max-height:27vh;object-fit:contain;border-radius:16px}
+      #startup-splash h2,#learn-splash h1{font:800 clamp(27px,5vw,45px)/1.12 system-ui,Arial,sans-serif;margin:12px 0;letter-spacing:-.025em}
+      #startup-splash h2 span,#learn-splash h1 span{color:#ff1744}
+      #startup-splash p,#learn-splash p{font:600 12px/1.5 system-ui,sans-serif;letter-spacing:.12em;color:#ac8791}
+      #startup-splash button,#learn-splash button{font:600 12px system-ui,sans-serif;padding:11px 17px;color:#f5f5f5;border:1px solid #632031;border-radius:9px;background:#211015;cursor:pointer}
+      #startup-splash .splash-line,#learn-splash .splash-progress{width:min(66vw,280px);height:4px;background:#401721;overflow:hidden;margin:22px auto 17px;border-radius:99px;flex-shrink:0}
+      #startup-splash .splash-line>span,#learn-splash .splash-progress>span{display:block!important;width:100%!important;height:100%!important;background:#ff1744;box-shadow:0 0 15px #ff174477;transform:scaleX(0);transform-origin:left center;animation:baddevBootFill 3.35s linear both!important}
+      @keyframes baddevBootFill{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+      #startup-splash.is-leaving,#learn-splash.is-leaving{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .38s ease,visibility .38s}
+      @media(prefers-reduced-motion:reduce){#startup-splash .splash-line>span,#learn-splash .splash-progress>span{animation:none!important;transform:scaleX(1)}#startup-splash.is-leaving,#learn-splash.is-leaving{transition:none}}
+    </style>
+    <link rel="preload" as="image" href="./public/baddev-logo-v12.svg" />
+  <style>:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f5f5f5;
+  background: #090909;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --bg: #090909;
+  --panel: #111111;
+  --editor: #0b0b0b;
+  --red: #d90b2b;
+  --hover: #ff1744;
+  --red-dark: #790016;
+  --border: #252525;
+  --muted: #999999;
+}
+* { box-sizing: border-box; }
+html, body, #app { width: 100%; height: 100%; margin: 0; }
+body { min-width: 380px; overflow: hidden; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #ff1744; outline-offset: 2px; }
+button, .file-item, .tab { transition: background-color 180ms, border-color 180ms, color 180ms, box-shadow 180ms; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+[hidden] { display: none !important; }
+.app-shell { height: 100%; display: flex; flex-direction: column; background: var(--bg); }
+.topbar { height: 73px; min-height: 73px; display: flex; align-items: center; justify-content: space-between; gap: 14px; background: #101010; border-bottom: 1px solid var(--border); padding: 0 25px 0 21px; z-index: 5; }
+.topbar-left, .topbar-actions { display: flex; align-items: center; }
+.topbar-left { min-width: 0; gap: 39px; }
+.topbar-actions { gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 190px; }
+.brand-logo { width: 56px; height: 39px; object-fit: contain; }
+.brand-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; white-space: nowrap; }
+.brand-copy strong { font-size: 20px; font-weight: 800; letter-spacing: -.8px; line-height: 1; }
+.brand-copy strong span { color: #ff1744; }
+.brand-copy small { font-size: 8px; letter-spacing: 1.85px; color: #7e7e7e; font-weight: 700; }
+.menubar { display: flex; align-items: center; gap: 5px; }
+.menu-wrap { position: relative; }
+.menu-trigger { padding: 10px 11px; color: #b5b5b5; border: 1px solid transparent; background: transparent; border-radius: 7px; font-size: 12.5px; }
+.menu-trigger:hover, .menu-trigger[aria-expanded="true"] { color: white; background: #1d1d1d; }
+.menu-trigger[aria-expanded="true"] { border-color: #3d1720; }
+.menu-chevron { color: #646464; margin-left: 5px; }
+.dropdown { position: absolute; top: calc(100% + 7px); left: 0; background: #171717; width: 247px; border: 1px solid #343434; border-radius: 9px; padding: 7px; box-shadow: 0 20px 45px #0009; z-index: 40; }
+.dropdown button { width: 100%; display: flex; align-items: center; justify-content: space-between; text-align: left; border: 0; color: #d8d8d8; background: transparent; padding: 11px; font-size: 12px; border-radius: 5px; }
+.dropdown button:hover { background: #3d111b; color: white; }
+.dropdown kbd { font-size: 10px; color: #777; font-family: inherit; }
+.menu-rule { display: block; border-top: 1px solid #303030; margin: 5px 7px; }
+.phase-chip { display: flex; gap: 10px; align-items: center; border: 1px solid #2d2d2d; background: #191919; color: #848484; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; padding: 10px 11px; margin-right: 6px; white-space: nowrap; }
+.online-dot { width: 6px; height: 6px; display: inline-block; border-radius: 50%; background: #dd2141; box-shadow: 0 0 8px #d90b2b88; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; background: transparent; color: #f3f3f3; padding: 10px 15px; border: 1px solid transparent; border-radius: 7px; font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+.btn svg { width: 16px; height: 16px; }
+.btn-quiet { background: #202020; border-color: #2b2b2b; }
+.btn-quiet:hover { background: #303030; border-color: #414141; }
+.btn-primary { background: #cc092a; border-color: #e00d32; box-shadow: 0 0 0 transparent; }
+.btn-primary:hover { background: #f00e39; box-shadow: 0 0 20px #d90b2b2d; }
+.btn-outline { border-color: #4b3338; background: #171213; }
+.btn-outline:hover { border-color: var(--hover); background: #29151a; }
+.workspace { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+.sidebar { display: flex; flex-direction: column; width: 257px; min-width: 257px; background: #111111; border-right: 1px solid var(--border); }
+.workspace.sidebar-collapsed .sidebar { display: none; }
+.sidebar-title { display: flex; align-items: center; justify-content: space-between; height: 67px; padding: 0 21px; border-bottom: 1px solid #222; }
+.sidebar-heading { color: #dedede; font-size: 10px; font-weight: 800; letter-spacing: 1.9px; }
+.sidebar-count { background: #242424; color: #a5a5a5; font-size: 11px; padding: 3px 8px; border-radius: 4px; }
+.side-section { padding-top: 21px; flex: 1; min-height: 0; overflow-y: auto; }
+.side-section-heading { display: flex; align-items: center; justify-content: space-between; color: #858585; font-size: 10px; font-weight: 750; letter-spacing: 1.15px; padding: 0 15px 13px 22px; }
+.side-section-actions { display: flex; gap: 2px; }
+.icon-button { display: flex; align-items: center; justify-content: center; border: 0; padding: 0; color: #9e9e9e; background: transparent; border-radius: 5px; width: 26px; height: 26px; font-size: 22px; font-weight: 350; }
+.icon-button svg { width: 17px; height: 17px; }
+.icon-button:hover { color: #ff1744; background: #2b171b; }
+.file-list { display: flex; flex-direction: column; gap: 2px; padding: 0 7px; }
+.file-item { display: flex; align-items: center; text-align: left; height: 36px; gap: 12px; border: 1px solid transparent; border-left: 2px solid transparent; color: #aaa; padding: 0 12px; background: transparent; font-size: 12px; width: 100%; min-width: 0; border-radius: 0 5px 5px 0; }
+.file-item:hover { background: #1f1f1f; color: #f5f5f5; }
+.file-item.is-active { background: #261519; border-left-color: #f01840; color: white; }
+.file-name { flex: 1; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.file-badge { font-size: 11px; width: 20px; min-width: 20px; text-align: center; font-weight: 900; font-family: Consolas, monospace; line-height: 1; }
+.file-badge-html, .file-badge-htm { color: #fb875c; }
+.file-badge-css { color: #68aaff; font-size: 18px; }
+.file-badge-js, .file-badge-mjs { color: #e5c660; }
+.file-badge-text { color: #999; }
+/* Etapa A: distintivos de sintaxis multilenguaje en explorador y pestañas. */
+.file-badge-ts { color:#52b7ff; }
+.file-badge-py { color:#8ecc65; }
+.file-badge-php { color:#b5a7f8; font-size:9px; }
+.file-badge-json { color:#e9b661; }
+.file-badge-md { color:#a0d6ff; }
+.file-badge-sql { color:#e99c6a; }
+.file-badge-scss { color:#e779ae; }
+.file-badge-xml { color:#79cbbc; font-size:9px; }
+.file-badge-yaml { color:#f08b75; }
+.file-badge-text { font-size:9px; }
+
+.modified-dot { border-radius: 50%; width: 7px; height: 7px; min-width: 7px; background: #ff1744; box-shadow: 0 0 7px #ff174444; }
+.empty-sidebar { padding: 4px 23px; font-size: 12px; line-height: 1.7; color: #626262; }
+.sidebar-bottom { display: flex; align-items: flex-start; gap: 12px; margin: 0 15px 18px; padding: 15px 11px; border: 1px solid #2c2225; background: #181315; border-radius: 9px; }
+.sidebar-tip-icon { color: #ff1744; font-size: 16px; margin-top: -1px; }
+.sidebar-bottom p { font-size: 10.5px; color: #898989; line-height: 1.8; margin: 0; }
+.sidebar-bottom strong { color: #d6d6d6; font-weight: 600; }
+.main-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; background: #0b0b0b; }
+.tabs-bar { display: flex; align-items: stretch; min-height: 47px; height: 47px; background: #121212; border-bottom: 1px solid #252525; padding-right: 19px; }
+.tabs { display: flex; align-items: stretch; overflow-x: auto; overflow-y: hidden; min-width: 0; scrollbar-width: thin; }
+.tab { display: flex; align-items: stretch; border-right: 1px solid #272727; background: #161616; min-width: 122px; max-width: 235px; }
+.tab:hover { background: #1d1d1d; }
+.tab.is-active { background: #0b0b0b; box-shadow: inset 0 2px 0 #ff1744; }
+.tab-label { display: flex; align-items: center; gap: 10px; min-width: 0; width: 100%; padding: 0 10px 0 14px; color: #999; font-size: 12px; text-align: left; background: none; border: none; }
+.tab.is-active .tab-label { color: #fafafa; }
+.tab-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tab-close { color: #797979; background: transparent; border: 0; padding: 0 12px 0 4px; font-size: 20px; font-weight: 300; }
+.tab-close:hover { color: #ff1744; }
+.tabs-add { align-self: center; margin-left: 12px; background: transparent; color: #898989; font-size: 23px; font-weight: 300; border: 0; border-radius: 5px; width: 29px; height: 30px; }
+.tabs-add:hover { color: #ff1744; background: #23161a; }
+.tabs-spacer { flex: 1; }
+.workspace-label { align-self: center; color: #555; letter-spacing: 1.8px; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.editor-stage { min-height: 0; position: relative; flex: 1; overflow: hidden; }
+.editor-host { position: absolute; inset: 0; height: 100%; }
+.editor-host .cm-editor { height: 100%; }
+.editor-host .cm-editor.cm-focused { outline: none; }
+.welcome { position: absolute; inset: 0; overflow: auto; display: flex; align-items: center; justify-content: center; background: #0b0b0b; }
+.welcome::before { content: ''; position: absolute; inset: 0; opacity: .13; pointer-events: none; background-image: linear-gradient(#525252 1px, transparent 1px), linear-gradient(90deg, #525252 1px, transparent 1px); background-size: 54px 54px; mask-image: radial-gradient(ellipse at center, #000, transparent 72%); }
+.welcome-halo { width: 430px; height: 430px; background: radial-gradient(circle, #5f061b24 0%, #0b0b0b00 70%); position: absolute; left: 50%; top: 43%; transform: translate(-50%, -50%); pointer-events: none; }
+.welcome-content { z-index: 1; max-width: 620px; padding: 26px; text-align: center; }
+.welcome-mark { display: flex; align-items: center; justify-content: center; width: 100px; height: 100px; margin: 0 auto 28px; border: 1px solid #47242a; border-radius: 21px; background: #191012; box-shadow: 0 0 40px #a0133221; }
+.welcome-mark img { width: 83px; height: 60px; }
+.welcome-eyebrow { font-size: 10px; font-weight: 750; letter-spacing: 2.1px; color: #f04a66; display: flex; align-items: center; justify-content: center; gap: 11px; }
+.tiny-red-line { width: 18px; height: 1px; background: #ff1744; }
+.welcome h1 { letter-spacing: -1.5px; font-size: clamp(30px, 3.8vw, 47px); line-height: 1.18; margin: 19px 0; font-weight: 790; }
+.welcome h1 em { font-style: normal; color: #ee173c; }
+.welcome-content > p { margin: 0 auto; color: #929292; max-width: 465px; font-size: 14px; line-height: 1.9; }
+.welcome-actions { margin-top: 34px; display: flex; justify-content: center; gap: 13px; }
+.btn-large { padding: 15px 24px; font-size: 13px; }
+.welcome-hint { color: #686868; font-size: 11px; margin-top: 27px; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.keycap { display: inline-flex; align-items: center; justify-content: center; background: #1b1b1b; border: 1px solid #343434; border-bottom-color: #535353; color: #aaa; padding: 4px 7px; border-radius: 4px; font-size: 10px; }
+.plus-sign { color: #555; }
+.welcome-decor { position: absolute; bottom: 29px; left: 32px; right: 32px; display: flex; justify-content: space-between; color: #515151; letter-spacing: 2px; font-size: 10px; }
+.statusbar { min-height: 29px; height: 29px; display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #151515; border-top: 1px solid #282828; padding: 0 17px; font-size: 10.5px; color: #959595; }
+.status-left, .status-right { display: flex; align-items: center; gap: 13px; min-width: 0; white-space: nowrap; }
+#status-file { overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+.status-brand-dot { height: 6px; width: 6px; border-radius: 50%; background: #f02042; box-shadow: 0 0 6px #f0204266; }
+.status-separator { width: 1px; height: 12px; background: #333; }
+.status-version { color: #bb475c; }
+.toast { position: fixed; bottom: 47px; right: 22px; z-index: 90; max-width: min(420px, calc(100vw - 30px)); border: 1px solid #5a2731; color: #f5f5f5; background: #1d1316; box-shadow: 0 8px 30px #0009; border-radius: 8px; padding: 14px 17px; font-size: 12px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity 190ms, transform 190ms; }
+.toast.is-visible { opacity: 1; transform: translateY(0); }
+.toast-error { border-color: #d90b2b; background: #290e16; }
+.app-dialog { border: 1px solid #393034; background: #141414; color: #eee; border-radius: 13px; width: min(450px, calc(100vw - 28px)); padding: 0; box-shadow: 0 25px 80px #000b; }
+.app-dialog::backdrop { background: #000b; backdrop-filter: blur(4px); }
+.dialog-inner { padding: 25px; }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; }
+.dialog-tag { font-size: 10px; letter-spacing: 1.7px; font-weight: 800; color: #fa3a5b; }
+.modal-close { color: #999; background: transparent; border: 0; font-size: 26px; line-height: 1; }
+.modal-close:hover { color: #ff1744; }
+.dialog-inner h2 { font-size: 23px; letter-spacing: -.5px; margin: 17px 0 9px; }
+.dialog-inner > p { color: #999; font-size: 12px; line-height: 1.8; margin: 0 0 21px; }
+.dialog-inner label { display: block; font-size: 12px; color: #dadada; margin: 14px 0 8px; }
+.dialog-inner select, .dialog-inner input { width: 100%; border: 1px solid #373737; background: #0d0d0d; color: #f5f5f5; border-radius: 7px; outline: 0; padding: 12px; font-size: 13px; }
+.dialog-inner select:focus, .dialog-inner input:focus { border-color: #ff1744; }
+.field-hint { min-height: 18px; font-size: 11px !important; margin-top: 12px !important; }
+.error-text { color: #ff5d77 !important; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 25px; }
+.info-content { padding-top: 6px; }
+.info-content p { color: #c2c2c2; font-size: 12px; line-height: 1.7; border-bottom: 1px solid #282828; padding-bottom: 8px; }
+.info-content strong { color: #f3f3f3; }
+.info-content .info-muted { color: #888; border: 0; }
+@media (max-width: 900px) { .topbar-left { gap: 14px; } .brand { min-width: auto; } .brand-copy small { display: none; } .phase-chip, .workspace-label { display: none; } .sidebar { width: 211px; min-width: 211px; } }
+@media (max-width: 650px) { .topbar { padding: 0 10px; height: 62px; min-height: 62px; } .brand-logo { width: 43px; } .brand-copy strong { font-size: 17px; } .brand { gap: 2px; } .menubar { gap: 0; } .menu-trigger { font-size: 11px; padding: 8px 5px; } .menu-chevron, .top-open { display: none; } .topbar-actions .btn { font-size: 11px; padding: 9px; } .sidebar { width: 174px; min-width: 174px; } .statusbar { font-size: 10px; padding: 0 8px; } .status-version, #status-lang { display: none; } .welcome h1 { font-size: 31px; } .welcome-content > p { font-size: 12px; } .welcome-actions { flex-wrap: wrap; } }
+
+/* BADDEV FASE 2 — Brillo rojo más visible, manteniendo la base negra. */
+:root {
+  --glow-red: 0 0 0 1px #ff17443e, 0 0 13px #ff174452, 0 0 28px #d90b2b2a;
+  --glow-red-soft: 0 0 0 1px #ff17442c, 0 0 12px #ff174435;
+}
+.btn-primary:hover, .btn-primary:focus-visible {
+  background: #ff1744;
+  border-color: #ff4667;
+  box-shadow: 0 0 0 1px #ff174450, 0 0 19px #ff17448c, 0 0 36px #b5093155;
+}
+.btn-outline:hover, .btn-quiet:hover, .menu-trigger:hover,
+.menu-trigger[aria-expanded="true"], .tabs-add:hover, .icon-button:hover,
+.dropdown button:hover, .tab-close:hover, .modal-close:hover {
+  border-color: #a2203c;
+  background-color: #32131c;
+  color: #fff;
+  box-shadow: var(--glow-red-soft);
+}
+.tab:hover:not(.is-active) { background: #241316; box-shadow: inset 0 2px 0 #bc17388a, 0 0 15px #d90b2b20; }
+.tab.is-active { box-shadow: inset 0 2px 0 #ff1744, 0 4px 14px #ff174420; }
+.tab.is-active:hover { box-shadow: inset 0 2px 0 #ff1744, 0 0 15px #ff174438; }
+.tab-close { border: 1px solid transparent; border-radius: 4px; margin: 7px 5px 7px 0; padding: 0 7px; }
+.icon-button, .tabs-add { border: 1px solid transparent; }
+.file-row { display: flex; min-width: 0; align-items: center; border: 1px solid transparent; border-radius: 6px; }
+.file-row:hover { background: #2a141a; border-color: #71243a; box-shadow: 0 0 14px #ed17462b; }
+.file-row.is-active { background: #29131b; border-color: #5c2030; }
+.file-row .file-item { flex: 1; min-width: 0; width: auto; padding-right: 5px; }
+.file-row .file-item:hover { background: transparent; box-shadow: none; }
+.file-row .file-item.is-active { background: transparent; }
+.file-row-actions { display: flex; align-items: center; flex: none; gap: 0; padding-right: 4px; opacity: 0; transition: opacity 180ms; }
+.file-row:hover .file-row-actions, .file-row:focus-within .file-row-actions { opacity: 1; }
+.file-row-actions button { border: 1px solid transparent; border-radius: 5px; width: 25px; height: 25px; color: #b2a1a7; background: transparent; font-size: 15px; }
+.file-row-actions button:hover { color: #fff; background: #51202d; border-color: #eb3356; box-shadow: 0 0 10px #ff17444b; }
+.file-tools { display: flex; gap: 5px; padding: 0 9px 13px 13px; }
+.file-filter-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.file-filter { width: 100%; min-width: 0; background: #090909; border: 1px solid #353035; color: #f4f4f4; border-radius: 6px; padding: 9px 10px; font-size: 11px; outline: none; transition: border-color 180ms, box-shadow 180ms; }
+.file-filter:focus { border-color: #ff1744; box-shadow: 0 0 14px #ff17443b; }
+.file-filter::placeholder { color: #696969; }
+.sort-button { font-size: 17px; width: 32px; height: auto; flex: none; border: 1px solid #303030; background: #191919; }
+.tabs-tool { align-self: center; flex: none; width: 28px; height: 29px; margin-right: 4px; font-size: 20px; }
+.top-settings { width: 36px; height: 36px; font-size: 22px; border-color: #292929; background: #181818; }
+.dialog-inner input[type="range"] { accent-color: #ff1744; border: none; background: transparent; padding: 7px 0; }
+.dialog-inner input[type="checkbox"] { accent-color: #ff1744; width: 16px; height: 16px; padding: 0; }
+.dialog-inner .settings-check { display: flex; gap: 12px; align-items: flex-start; line-height: 1.5; padding: 11px 0; cursor: pointer; }
+#font-value { color: #ff5875; font-weight: 700; }
+.sidebar-count { border: 1px solid #383038; }
+.file-row:focus-within, .file-item:focus-visible { outline: 1px solid #ff1744; outline-offset: -1px; }
+@media (hover: none) { .file-row-actions { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { button, .file-item, .tab, .file-row-actions, .file-filter { transition: none; } }
+@media (max-width: 650px) { .top-settings { display: none; } .tabs-tool { margin-right: 1px; } .sidebar .file-row-actions { opacity: 1; } }
+
+/* FASE 3: vista previa, proyecto y presentación del logo en cualquier pantalla. */
+.project-banner { display:flex;align-items:center;gap:5px;padding:14px 10px 14px 18px;border-bottom:1px solid #252525;background:#131012; }
+.project-banner>div { flex:1;min-width:0; }
+.project-label { display:block;font-size:9px;letter-spacing:1.4px;color:#aa6071;margin-bottom:5px; }
+#project-name { font-size:12px;display:block;color:#f4f4f4;overflow:hidden;white-space:nowrap;text-overflow:ellipsis; }
+.project-banner .icon-button { width:28px;height:28px;flex:none;border:1px solid #35252a;font-size:17px; }
+.top-preview {border-color:#6d2635;color:#ffe2e8;padding:10px 13px;}
+.top-preview:hover {background:#42111e;border-color:#ff1744;box-shadow:0 0 17px #ff174467,0 0 35px #d90b2b2d;}
+.editor-stage { display:flex; align-items:stretch; }
+.editor-host {position:relative;inset:auto;flex:1;min-width:0;height:100%;}
+.welcome {position:relative;flex:1;min-width:0;}
+.welcome-content {max-width:min(690px,100%);padding:clamp(18px,3vw,36px);}
+.welcome-mark {width:clamp(114px,17vw,190px);height:clamp(93px,14vw,145px);border-radius:26px;overflow:visible;animation:logoBreathe 3.2s ease-in-out infinite;}
+.welcome-mark img {display:block;width:90%;height:85%;object-fit:contain;}
+.preview-panel {display:flex;flex-direction:column;min-width:270px;width:43%;height:100%;background:#101010;border-left:1px solid #4e1b29;box-shadow:-5px 0 24px #0006;}
+.preview-toolbar {height:46px;flex:none;display:flex;align-items:center;gap:6px;padding:0 9px;border-bottom:1px solid #272727;background:#151515;}
+.preview-heading {display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:9px;letter-spacing:1.25px;color:#b9b9b9;margin-right:auto;}
+.preview-live-dot {height:6px;width:6px;border-radius:100%;background:#ff1744;box-shadow:0 0 11px #ff17449a;}
+#preview-entry {background:#1c1c1c;border:1px solid #34252b;border-radius:5px;color:#ddd;padding:7px 3px;width:100px;max-width:26%;font-size:11px;}
+.preview-toolbar .icon-button {flex:none;width:27px;height:27px;font-size:19px;border:1px solid transparent;}
+#preview-frame {background:#fff;width:100%;min-height:120px;flex:1;border:0;}
+.preview-console {height:133px;min-height:90px;background:#111;border-top:1px solid #353035;display:flex;flex-direction:column;}
+.preview-console-title {display:flex;align-items:center;gap:7px;padding:10px 13px 8px;font-size:10px;letter-spacing:1px;color:#ccc;border-bottom:1px solid #222;}
+#preview-error-count {color:#fa4868;font-weight:700;}
+#clear-errors {margin-left:auto;border:1px solid #39252b;color:#c2a2ab;background:#1d1417;border-radius:4px;font-size:10px;padding:4px 8px;}
+.preview-errors {font-family:Consolas,monospace;font-size:11px;color:#ff718d;overflow:auto;padding:7px 12px;line-height:1.6;}
+.preview-errors p {margin:5px 0;overflow-wrap:anywhere;}
+.preview-errors .preview-notice {color:#b5a3a7;}
+.preview-errors .preview-ok {color:#8fa997;}
+.startup-splash {position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:#090909;overflow:hidden;transition:opacity 500ms ease,visibility 500ms ease;}
+.startup-splash.is-leaving {opacity:0;visibility:hidden;pointer-events:none;}
+.splash-content {position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:min(92vw,650px);max-height:90vh;text-align:center;}
+.splash-glow {position:absolute;top:32%;left:50%;width:min(68vw,420px);height:min(68vw,420px);transform:translate(-50%,-50%);border-radius:100%;background:radial-gradient(circle,#9e0c2735 0%,#d90b2b10 36%,transparent 72%);filter:blur(10px);animation:splashPulse 2.8s ease-in-out infinite;pointer-events:none;}
+.splash-logo-frame {width:min(68vw,330px);height:min(34vh,200px);max-height:200px;display:flex;align-items:center;justify-content:center;animation:splashEnter 800ms cubic-bezier(.2,.8,.2,1) both,splashFloat 3s ease-in-out 800ms infinite;}
+.splash-logo-frame img {display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 20px #ff17444d) drop-shadow(0 0 38px #e50a2c35);}
+.splash-content h2 {margin:10px 0 2px;font-size:clamp(24px,5vw,43px);letter-spacing:.11em;color:#f2f2f2;font-weight:900;animation:splashEnter 800ms 180ms both;}
+.splash-content h2 span {color:#ff1744;text-shadow:0 0 22px #ff17445c;}
+.splash-content p {font-size:clamp(9px,1.8vw,12px);letter-spacing:.35em;color:#a9a9a9;animation:splashEnter 800ms 280ms both;}
+.splash-line {height:2px;width:min(58vw,230px);margin:30px auto 10px;background:#35131d;border-radius:10px;overflow:hidden;}
+.splash-line span {display:block;height:100%;width:100%;background:#ff1744;transform:translateX(-100%);box-shadow:0 0 13px #ff1744;animation:splashProgress 4.2s linear both;}
+.splash-skip {background:transparent;border:1px solid #5c2432;color:#d4afb9;border-radius:8px;margin-top:16px;padding:9px 17px;font-size:11px;}
+.splash-skip:hover {border-color:#ff1744;color:white;background:#3d1520;box-shadow:0 0 18px #ff174460;}
+@keyframes splashProgress {to {transform:translateX(0);}}
+@keyframes splashEnter {from {opacity:0;transform:translateY(17px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes splashFloat {0%,100% {translate:0 0;}50% {translate:0 -8px;}}
+@keyframes splashPulse {0%,100% {opacity:.45;scale:.94;}50%{opacity:1;scale:1.08;}}
+@keyframes logoBreathe {0%,100% {box-shadow:0 0 22px #b017352e;}50%{box-shadow:0 0 34px #ff174453;}}
+@media (max-width:1000px) {.top-preview {padding:9px 8px;} .preview-panel {width:48%;} .preview-heading strong{display:none;} }
+@media (max-width:760px) {.editor-stage {flex-direction:column;} .preview-panel {height:46%;width:100%;min-width:0;min-height:170px;border-left:0;border-top:1px solid #562330;} .preview-console {height:86px;} .preview-heading strong{display:inline;} .top-preview{font-size:10px;} .welcome-mark {width:115px;height:90px;margin-bottom:14px;} .welcome-actions {gap:8px;margin-top:20px;} .welcome-actions .btn {padding:10px 12px;} .welcome-decor {display:none;} }
+@media (max-height:530px) {.splash-logo-frame {height:25vh;} .splash-line {margin-top:12px;} .welcome-content {padding:12px;} .welcome-mark{width:95px;height:68px;margin-bottom:12px;} }
+@media (prefers-reduced-motion: reduce) {.startup-splash,.splash-logo-frame,.splash-glow,.splash-content h2,.splash-content p,.splash-line span,.welcome-mark{animation:none;transition:none;} .splash-line span {transform:none;} }
+
+/* FASE 4: accesibilidad, rendimiento visual y aviso claro de respaldo local */
+.skip-link {position:fixed;left:14px;top:-80px;padding:11px 15px;border:2px solid #ff1744;border-radius:8px;color:#fff;background:#1d0c12;z-index:300;transition:top 150ms;}
+.skip-link:focus {top:12px;}
+.backup-status {font-size:10px;color:#c997a4;white-space:nowrap;}
+:focus-visible {scroll-margin:10px;}
+.file-row:focus-within .file-row-actions {opacity:1;}
+#status-save {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sidebar, .preview-panel {contain:layout style;}
+@media (max-width:1080px) {
+  .backup-status {display:none;}
+  .topbar-left {gap:14px;}
+  .brand {min-width:auto;}
+}
+@media (max-width:760px) {
+  .topbar {padding-inline:8px;gap:5px;}
+  .menu-trigger {padding-inline:5px;}
+  .top-open, .phase-chip {display:none;}
+  .topbar-actions {gap:5px;}
+  .topbar-actions .btn-primary {padding-inline:10px;}
+  .topbar-actions .btn-primary svg {display:none;}
+  .brand-logo {width:35px;height:30px;}
+  .brand-copy small {display:none;}
+  .brand-copy strong {font-size:16px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  html {scroll-behavior:auto;}
+  .splash-content *, .welcome-mark, .splash-glow {animation-duration:0.01ms!important;animation-iteration-count:1!important;}
+  * {transition-duration:0.01ms!important;}
+}
+
+
+
+/* FASE 6: acceso a Learn sin ocultar el menú original. */
+.brand-home { background:none;border:0;text-align:left;color:inherit;padding:0; }
+.brand-home:hover { background:transparent;box-shadow:none; }
+.brand-home:focus-visible { outline:2px solid #ff1744; outline-offset:5px; }
+.welcome-content { max-width:min(100%,860px); margin:auto; }
+.welcome-actions { display:flex;justify-content:center;gap:12px;flex-wrap:wrap; }
+.welcome-learn { border-color:#8d2b42;box-shadow:0 0 18px #d90b2b20; }
+.welcome-learn:hover {border-color:#ff1744;box-shadow:0 0 20px #ff174480,0 0 36px #d90b2b32;}
+.welcome { align-items:safe center; }
+.welcome-content { padding-top:25px;padding-bottom:35px; }
+@media (max-height:750px) { .welcome { align-items:flex-start; } .welcome-content { padding-top:22px; } .welcome-mark { margin-bottom:14px; } }
+@media (max-width:680px) { .welcome-actions {gap:8px;} .welcome-actions .btn {white-space:normal;text-align:center;} }
+
+/* V 0.7: salida de proyecto controlada y flujo explícito de guardado */
+.top-close-project{font-size:11px;padding:9px 11px;white-space:nowrap;border-color:#702435;color:#f3c6cf}.top-close-project:hover{border-color:#ff1744;box-shadow:0 0 15px #ff174450}.welcome-workflow{max-width:580px!important;margin:24px auto -6px!important;color:#ac9298!important;font-size:11px!important;line-height:1.65!important}.welcome-workflow strong{color:#f2f2f2}
+@media(max-width:1030px){.top-close-project{padding:9px 7px;font-size:10px}}
+@media(max-width:720px){.top-close-project{display:none}}
+
+.welcome[hidden], .preview-panel[hidden], .editor-host[hidden], .startup-splash[hidden] { display:none!important; }
+
+/* BadDev V 0.8 - cinco identidades */
+:root[data-theme="purple"] { --red:#9855ef; --hover:#bb86ff; --red-dark:#4e2288; --bg:#09070f; --panel:#130e1c; --editor:#0c0912; --border:#30243f; --muted:#aaa0b8; }
+:root[data-theme="green"] { --red:#24bc69; --hover:#38d67a; --red-dark:#13643d; --bg:#070c09; --panel:#0d1711; --editor:#08100b; --border:#223a2b; --muted:#98ad9e; }
+:root[data-theme="angel"] { --red:#2aa9eb; --hover:#6cd8ff; --red-dark:#1288c7; --bg:#e9f8ff; --panel:#f8fdff; --editor:#f7fcff; --border:#b7e5f8; --muted:#4e7893; color:#12354a; background:var(--bg); }
+:root[data-theme="slayer"] { --red:#ee5b13; --hover:#ff8732; --red-dark:#852400; --bg:#100b09; --panel:#1b110e; --editor:#140c0a; --border:#503021; --muted:#baa49a; }
+:root[data-theme]:not([data-theme="demon"]) .app-shell { background:var(--bg); }
+:root[data-theme]:not([data-theme="demon"]) .topbar, :root[data-theme]:not([data-theme="demon"]) .sidebar, :root[data-theme]:not([data-theme="demon"]) .preview-panel { background:var(--panel); }
+:root[data-theme]:not([data-theme="demon"]) .btn-primary { background:var(--red); }
+:root[data-theme]:not([data-theme="demon"]) .btn-primary:hover { background:var(--hover); box-shadow:0 0 22px color-mix(in srgb,var(--hover) 45%,transparent); }
+:root[data-theme]:not([data-theme="demon"]) button:focus-visible { outline-color:var(--hover); }
+:root[data-theme="angel"] .topbar, :root[data-theme="angel"] .sidebar, :root[data-theme="angel"] .main-panel, :root[data-theme="angel"] .tabs-bar, :root[data-theme="angel"] .statusbar { color:#12354a; background:#f7fcff; }
+:root[data-theme="angel"] .welcome { background:linear-gradient(180deg, #eefbff, #e4f6ff); }
+:root[data-theme="angel"] .welcome h1, :root[data-theme="angel"] .brand strong { color:#17374b; }
+:root[data-theme="angel"] .welcome p { color:#4b7791; }
+:root[data-theme="angel"] .editor-stage { background:#f5fbff; }
+:root[data-theme="angel"] .cm-editor { background:#f7fcff; color:#17374b; }
+:root[data-theme="angel"] .cm-gutters { background:#e9f5ff; color:#638aa3; }
+:root[data-theme="angel"] .menu-trigger, :root[data-theme="angel"] .tab-label { color:#234e65; }
+.preview-panel { min-width:0; }
+#preview-frame { display:block; width:100%; max-width:100%; margin:0 auto; transition:max-width .18s ease; }
+.preview-panel[data-device="tablet"] #preview-frame { max-width:768px; }
+.preview-panel[data-device="mobile"] #preview-frame { max-width:390px; }
+.auto-preview-label { font-size:11px; display:flex; align-items:center; gap:4px; white-space:nowrap; }
+.preview-console .preview-log { color:#a8d4ff; }
+.preview-console .preview-warn { color:#ffd38c; }
+
+
+/* V 0.9: Angelical Water más celeste y línea activa más visible */
+:root[data-theme="angel"] .btn-primary { color:#fff; }
+:root[data-theme="angel"] .btn-outline, :root[data-theme="angel"] .btn-quiet { border-color:#b1dff2; color:#174560; }
+:root[data-theme="angel"] .btn-outline:hover, :root[data-theme="angel"] .btn-quiet:hover { background:#e6f7ff; border-color:#56c8fb; box-shadow:0 0 18px #56c8fb33; }
+:root[data-theme="angel"] .file-item.active, :root[data-theme="angel"] .tab.active { background:linear-gradient(180deg, #e3f5ff, #d7f0ff); }
+:root[data-theme="angel"] .menu-panel, :root[data-theme="angel"] .app-dialog .dialog-inner { background:#fbfeff; color:#17384d; border-color:#b7e5f8; }
+:root[data-theme="angel"] .welcome-learn { border-color:#a9dbf4; }
+:root[data-theme="angel"] .cm-editor .cm-activeLine { background:#dff3ff !important; }
+:root[data-theme="angel"] .cm-editor .cm-activeLineGutter { background:#d4efff !important; color:#0d6d9d !important; }
+:root[data-theme="angel"] .cm-editor.cm-focused .cm-selectionBackground, :root[data-theme="angel"] .cm-editor ::selection { background:#8edbff88 !important; }
+:root[data-theme="angel"] .cm-editor .cm-selectionBackground { background:#bee9ff99 !important; }
+:root[data-theme="angel"] .cm-editor .cm-cursor { border-left-color:#1288c7 !important; }
+
+/* BadDev V1.0 — nueva identidad fotográfica del logo; favicon original intacto */
+.splash-logo-frame{width:min(72vw,430px);height:min(33vh,250px);max-height:250px;}
+.splash-logo-frame img{width:100%;height:100%;object-fit:contain;border-radius:16px;}
+.welcome-mark{width:clamp(185px,32vw,300px);height:auto;aspect-ratio:1672/941;overflow:hidden;background:#261118;border-radius:20px;padding:0;}
+.welcome-mark img{width:100%;height:100%;object-fit:contain;border-radius:17px;}
+.brand-logo{width:64px;height:40px;object-fit:contain;border-radius:6px;background:#261118;}
+:root[data-theme="angel"] .welcome-mark,:root[data-theme="angel"] .brand-logo{background:#261118;}
+@media(max-width:760px){.welcome-mark{width:clamp(150px,46vw,240px);height:auto;}}
+
+
+/* BadDev V 1.0.1 — lluvia de código tenue y cursor decorativo temático */
+.welcome .code-rain { position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:paint; }
+.rain-bit { position:absolute;top:-40px;color:var(--hover, #ff1744);opacity:0;font:600 12px/1.4 Consolas,monospace;white-space:nowrap;text-shadow:0 0 12px color-mix(in srgb,var(--hover,#ff1744) 48%,transparent);animation:codeRainFall 10s linear forwards; }
+@keyframes codeRainFall { 0%{transform:translateY(-20px);opacity:0} 12%{opacity:.28} 82%{opacity:.18} 100%{transform:translateY(min(88vh,740px));opacity:0} }
+.welcome-content{position:relative;z-index:1;}
+.welcome-eyebrow .hero-caret {display:inline-block;vertical-align:middle;width:6px;height:17px;background:var(--hover,#ff1744);border-radius:1px;box-shadow:0 0 16px color-mix(in srgb,var(--hover,#ff1744) 65%,transparent);animation:caretBlink 1.25s steps(1,end) infinite;}
+@keyframes caretBlink{50%{opacity:.12}}
+.unsaved-dialog .dialog-inner {width:min(96vw,520px);}
+.unsaved-options {display:grid;gap:11px;margin-top:20px;}
+.unsaved-options>.btn{width:100%;display:flex;justify-content:center;gap:11px;align-items:center;min-height:46px;}
+.unsaved-discard {background:#1c1014;color:#ff91a7;border:1px solid #8b334a;}
+.unsaved-discard:hover{border-color:#ff4d76;background:#38121f;box-shadow:0 0 18px #ff174438;color:white;}
+.unsaved-back{display:block;margin:15px auto 0;background:transparent;border:0;color:var(--muted,#999);cursor:pointer;text-decoration:underline;}
+.unsaved-options button:disabled {opacity:.45;cursor:wait;}
+@media(prefers-reduced-motion:reduce){.rain-bit,.hero-caret{animation:none!important}.code-rain{display:none}}
+
+/* BadDev V1.2 Etapa B — diagnósticos locales de JSON/XML/YAML */
+.diagnostics-dialog .dialog-inner{width:min(94vw,660px);max-height:min(82vh,760px);overflow:auto}
+.diagnostics-list{display:grid;gap:10px;margin:16px 0;max-height:42vh;overflow:auto}
+.diagnostic-entry{display:grid;gap:6px;width:100%;padding:12px 14px;text-align:left;cursor:pointer;background:#211316;border:1px solid #7c3444;border-radius:11px;color:#f6e4e8;transition:background .18s,border-color .18s,box-shadow .18s}
+.diagnostic-entry:hover,.diagnostic-entry:focus-visible{background:#351923;border-color:var(--hover,#ff1744);box-shadow:0 0 15px #ff174433;outline:none}
+.diagnostic-entry strong{font-size:12px;color:#ffa1b4}
+.diagnostic-entry span{font:12px/1.5 Consolas,monospace;overflow-wrap:anywhere;white-space:pre-wrap}
+.diagnostic-entry.diagnostic-warning{border-color:#ae7938;background:#2a2117}
+.diagnostic-entry.diagnostic-warning strong{color:#ffdb98}
+.diagnostic-ok{padding:18px;border-radius:12px;border:1px solid #2b8250;background:#101f16;color:#a7efc0}
+:root[data-theme="angel"] .diagnostic-entry{background:#e9f7ff;border-color:#87c8e5;color:#12415d}
+:root[data-theme="angel"] .diagnostic-entry strong{color:#00619a}
+:root[data-theme="angel"] .diagnostic-ok{background:#e7fff0;color:#0f6535}
+
+
+/* BadDev V1.2 Etapa C — vista previa ampliada y modal de salida mejorado */
+.app-dialog{box-sizing:border-box;max-width:calc(100vw - 24px);overflow:hidden}
+.app-dialog .dialog-inner{box-sizing:border-box;max-width:100%;overflow-x:hidden}
+.unsaved-dialog{width:min(92vw,700px);border-color:#4a3137;background:linear-gradient(180deg,#171518,#101012)}
+.unsaved-dialog .dialog-inner{width:100%;padding:30px clamp(18px,3vw,36px) 28px}
+.unsaved-dialog .dialog-head{gap:16px;align-items:flex-start}
+.unsaved-dialog .dialog-tag{font-size:11px;letter-spacing:2.1px}
+.unsaved-dialog h2{font-size:clamp(32px,4vw,46px);line-height:1.08;margin:16px 0 12px;max-width:16ch}
+.unsaved-dialog p{font-size:13px;line-height:1.85;overflow-wrap:anywhere}
+.unsaved-dialog #unsaved-description{max-width:62ch;color:#bcbcc3}
+.unsaved-dialog #unsaved-error{margin:2px 0 0;min-height:42px;color:#cfcfd6;background:#131317;border:1px solid #2d2d35;border-radius:12px;padding:12px 14px}
+.unsaved-options{gap:13px;margin-top:18px}
+.unsaved-options>.btn{min-height:64px;border-radius:14px;font-size:15px;font-weight:760;letter-spacing:-.2px;padding:16px 18px}
+.unsaved-options>.btn svg{flex:none}
+.unsaved-dialog .btn-primary{box-shadow:0 0 0 1px #ff32504a,0 0 24px #d90b2b2a}
+.unsaved-dialog .btn-outline{background:#171216;border-color:#4e3239}
+.unsaved-dialog .btn-outline:hover{background:#22171b}
+.unsaved-discard{background:#1b1014;color:#ff9fb2;border:1px solid #8a374c}
+.unsaved-back{margin-top:18px;font-size:13px}
+@media(max-width:620px){.unsaved-dialog{width:min(96vw,700px)}.unsaved-dialog .dialog-inner{padding:22px 16px 20px}.unsaved-dialog h2{font-size:clamp(28px,8vw,38px);max-width:none}.unsaved-options>.btn{min-height:56px;font-size:14px}}
+
+/* BadDev V1.2 — Etapa F: tarjeta de consejos, 7.5 segundos y fade elegante. */
+.sidebar-bottom{position:relative;min-height:112px;padding:16px 14px 23px;align-items:flex-start;overflow:hidden}
+.sidebar-tip-icon{flex:none;color:var(--hover,#ff1744)}
+.sidebar-tip-content{flex:1;min-width:0;opacity:1;transform:translateY(0);transition:opacity 240ms ease,transform 240ms ease;}
+.sidebar-tip-content.is-fading{opacity:0;transform:translateY(5px)}
+.sidebar-tip-content strong,.sidebar-tip-content span{display:block;overflow-wrap:break-word}
+.sidebar-tip-content strong{margin-bottom:5px;font-size:11px}
+.sidebar-tip-pips{position:absolute;bottom:10px;right:14px;display:flex;gap:6px;pointer-events:none}
+.sidebar-tip-pips span{display:block;width:14px;height:3px;border-radius:6px;background:#67535a;opacity:.55;transition:background .2s,opacity .2s,width .2s}
+.sidebar-tip-pips span.is-active{width:22px;background:var(--hover,#ff1744);opacity:1;box-shadow:0 0 8px color-mix(in srgb,var(--hover,#ff1744) 40%,transparent)}
+@media(prefers-reduced-motion:reduce){.sidebar-tip-content,.sidebar-tip-pips span{transition:none!important}}
+
+/* Angelical Water F — celeste sereno y marfil amarillento muy pálido. */
+:root[data-theme="angel"]{
+  color-scheme:light;
+  --bg:#eff9ff;
+  --panel:#fffdf0;
+  --editor:#fffdf5;
+  --red:#279ad2;
+  --hover:#58c4f4;
+  --red-dark:#197eac;
+  --border:#b9ddeb;
+  --muted:#567e96;
+  --angel-ink:#174660;
+  --angel-soft:#e4f5ff;
+  --angel-ice:#d2edff;
+  --angel-ivory:#fffdf0;
+  --angel-edge:#add8ec;
+  background:var(--bg);color:var(--angel-ink);
+}
+:root[data-theme="angel"] .app-shell,
+:root[data-theme="angel"] .workspace,
+:root[data-theme="angel"] .main-panel,
+:root[data-theme="angel"] .editor-stage{background:var(--bg);color:var(--angel-ink)}
+:root[data-theme="angel"] .topbar,
+:root[data-theme="angel"] .sidebar,
+:root[data-theme="angel"] .sidebar-title,
+:root[data-theme="angel"] .sidebar-bottom,
+:root[data-theme="angel"] .statusbar{
+  background:var(--angel-ivory);color:var(--angel-ink);border-color:var(--angel-edge);
+}
+:root[data-theme="angel"] .sidebar-bottom{
+  background:linear-gradient(145deg,#f8fcff,#fffbea);border:1px solid var(--angel-edge);
+  box-shadow:0 8px 20px #3c9aca14;
+}
+:root[data-theme="angel"] .sidebar-bottom strong,
+:root[data-theme="angel"] .sidebar-heading,
+:root[data-theme="angel"] .sidebar-tip-icon,
+:root[data-theme="angel"] .sidebar-count,
+:root[data-theme="angel"] .status-version,
+:root[data-theme="angel"] .sidebar-bottom p,
+:root[data-theme="angel"] #project-name {color:var(--angel-ink)}
+:root[data-theme="angel"] .sidebar-bottom p {color:#56778c}
+:root[data-theme="angel"] .sidebar-count,
+:root[data-theme="angel"] .phase-chip,
+:root[data-theme="angel"] .keycap,
+:root[data-theme="angel"] .top-settings,
+:root[data-theme="angel"] .sort-button {background:#e9f7ff;color:#246a8d;border-color:var(--angel-edge)}
+:root[data-theme="angel"] .project-banner,
+:root[data-theme="angel"] .tabs-bar,
+:root[data-theme="angel"] .preview-toolbar,
+:root[data-theme="angel"] .preview-console-title{
+  background:#e5f6ff;color:#235c7a;border-color:var(--angel-edge);
+}
+:root[data-theme="angel"] .tab,
+:root[data-theme="angel"] .preview-panel,
+:root[data-theme="angel"] .preview-console,
+:root[data-theme="angel"] .preview-errors,
+:root[data-theme="angel"] .preview-panel .preview-toolbar{
+  background:#f6fbff;color:var(--angel-ink);border-color:var(--angel-edge);
+}
+:root[data-theme="angel"] .tab.is-active,
+:root[data-theme="angel"] .tab.active{background:var(--editor);box-shadow:inset 0 3px 0 #36aeed}
+:root[data-theme="angel"] .tab:hover,
+:root[data-theme="angel"] .file-row:hover,
+:root[data-theme="angel"] .file-row.is-active,
+:root[data-theme="angel"] .file-item:hover,
+:root[data-theme="angel"] .file-item.is-active,
+:root[data-theme="angel"] .file-item.active{background:#dff3ff;color:#134967;border-color:#91cfea;box-shadow:none}
+:root[data-theme="angel"] .tab-label,
+:root[data-theme="angel"] .tab.is-active .tab-label,
+:root[data-theme="angel"] .tab-close,
+:root[data-theme="angel"] .icon-button,
+:root[data-theme="angel"] .tabs-tool,
+:root[data-theme="angel"] .file-row-actions button,
+:root[data-theme="angel"] .file-item,
+:root[data-theme="angel"] .menu-trigger,
+:root[data-theme="angel"] .top-close-project,
+:root[data-theme="angel"] .workspace-label {color:#225c7b}
+:root[data-theme="angel"] .dropdown,
+:root[data-theme="angel"] .app-dialog,
+:root[data-theme="angel"] .app-dialog .dialog-inner,
+:root[data-theme="angel"] .unsaved-dialog,
+:root[data-theme="angel"] .diagnostics-dialog{
+  background:var(--angel-ivory);color:var(--angel-ink);border-color:var(--angel-edge);
+}
+:root[data-theme="angel"] .dropdown button,
+:root[data-theme="angel"] .dropdown kbd,
+:root[data-theme="angel"] .dialog-inner h2,
+:root[data-theme="angel"] .dialog-inner label,
+:root[data-theme="angel"] .info-content strong{color:var(--angel-ink)}
+:root[data-theme="angel"] .dropdown button:hover,
+:root[data-theme="angel"] .menu-trigger:hover,
+:root[data-theme="angel"] .menu-trigger[aria-expanded="true"],
+:root[data-theme="angel"] .icon-button:hover,
+:root[data-theme="angel"] .tabs-add:hover,
+:root[data-theme="angel"] .file-row-actions button:hover,
+:root[data-theme="angel"] .tab-close:hover{
+  color:#115779;background:#d9f1ff;border-color:#91cfea;box-shadow:0 0 12px #54bde844;
+}
+:root[data-theme="angel"] .btn,
+:root[data-theme="angel"] .btn-quiet,
+:root[data-theme="angel"] .btn-outline,
+:root[data-theme="angel"] .top-close-project,
+:root[data-theme="angel"] .top-preview,
+:root[data-theme="angel"] .welcome-learn,
+:root[data-theme="angel"] .unsaved-discard{
+  background:#e5f5ff;color:#165a7e;border-color:#a5d8ee;
+}
+:root[data-theme="angel"] .btn-primary{
+  background:#258ec5;color:#fffdf1;border-color:#217fad;box-shadow:0 5px 15px #288cc529;
+}
+:root[data-theme="angel"] .btn-primary:hover{background:#147daf;color:#fffdf1;border-color:#176f9b;box-shadow:0 0 17px #38b7f977}
+:root[data-theme="angel"] .btn:not(.btn-primary):hover,
+:root[data-theme="angel"] .top-preview:hover{
+  background:#d4efff;color:#104d70;border-color:#69c5ef;
+}
+:root[data-theme="angel"] .sidebar-count,
+:root[data-theme="angel"] .file-filter,
+:root[data-theme="angel"] #preview-entry,
+:root[data-theme="angel"] .dialog-inner select,
+:root[data-theme="angel"] .dialog-inner input:not([type="checkbox"]):not([type="range"]){
+  background:var(--angel-ivory);color:#174c66;border-color:var(--angel-edge);
+}
+:root[data-theme="angel"] .file-filter::placeholder{color:#7296aa}
+:root[data-theme="angel"] .dialog-inner>p,
+:root[data-theme="angel"] .field-hint,
+:root[data-theme="angel"] .dialog-tag,
+:root[data-theme="angel"] .info-content p {color:#547b94}
+:root[data-theme="angel"] .welcome{background:radial-gradient(circle at 48% 13%,#d1efff,#effaff 58%,#fffdf0 100%)}
+:root[data-theme="angel"] .welcome-halo{background:radial-gradient(circle,#65c9f329,transparent 74%)}
+:root[data-theme="angel"] .welcome::before{background-image:linear-gradient(#7dc8e449 1px,transparent 1px),linear-gradient(90deg,#7dc8e449 1px,transparent 1px)}
+:root[data-theme="angel"] .welcome-content>p,
+:root[data-theme="angel"] .welcome-hint,
+:root[data-theme="angel"] .welcome-workflow,
+:root[data-theme="angel"] .welcome-workflow strong{color:#476e87!important}
+:root[data-theme="angel"] .welcome h1,
+:root[data-theme="angel"] .brand-copy strong{color:#194965}
+:root[data-theme="angel"] .cm-editor,
+:root[data-theme="angel"] .cm-editor .cm-scroller,
+:root[data-theme="angel"] .cm-editor .cm-content{background:var(--editor)!important;color:#164661}
+:root[data-theme="angel"] .cm-editor .cm-gutters{background:#e3f3ff!important;color:#487e9a!important;border-right:1px solid var(--angel-edge)}
+:root[data-theme="angel"] .cm-editor .cm-activeLine{background:#d6edff!important}
+:root[data-theme="angel"] .cm-editor .cm-activeLineGutter{background:#c7e7fb!important;color:#0e658d!important}
+:root[data-theme="angel"] .cm-editor .cm-cursor{border-left-color:#087ab3!important}
+:root[data-theme="angel"] .cm-editor .cm-selectionBackground{background:#94d8fcaa!important}
+:root[data-theme="angel"] .cm-editor .cm-search,
+:root[data-theme="angel"] .cm-editor .cm-panels{background:#f0faff!important;color:#174a67!important;border-color:var(--angel-edge)}
+:root[data-theme="angel"] .cm-editor .cm-search input{background:#fffdf0!important;color:#174a67!important;border:1px solid var(--angel-edge)}
+:root[data-theme="angel"] .preview-heading,
+:root[data-theme="angel"] .preview-console-title,
+:root[data-theme="angel"] .preview-errors .preview-notice{color:#2c607d}
+:root[data-theme="angel"] .preview-errors,
+:root[data-theme="angel"] .preview-errors .preview-log{color:#19608d}
+:root[data-theme="angel"] #clear-errors{background:#e3f4ff;color:#1d6488;border-color:var(--angel-edge)}
+:root[data-theme="angel"] .toast{background:#fffdf0;color:#20516d;border-color:var(--angel-edge);box-shadow:0 8px 25px #2e7ca52a}
+:root[data-theme="angel"] .toast-error{background:#fff1f4;color:#a92d50;border-color:#e7a4b9}
+:root[data-theme="angel"] .unsaved-dialog #unsaved-error,
+:root[data-theme="angel"] .unsaved-discard{background:#e5f5ff;color:#235e7c;border-color:#a4d7ed}
+:root[data-theme="angel"] .unsaved-options>.btn-primary{background:#238fc6;color:#fffdf0}
+:root[data-theme="angel"] .startup-splash{background:#ecfaff;color:#174661}
+:root[data-theme="angel"] .splash-content h2{color:#1b4f6e}
+:root[data-theme="angel"] .splash-content p{color:#6686a0}
+/* No recolorear #preview-frame: es el HTML del proyecto, aislado. */
+
+/* Afinado final de acentos en el tema luminoso (no altera el logo rojo). */
+:root[data-theme="angel"] .brand-copy strong span,
+:root[data-theme="angel"] .welcome h1 em,
+:root[data-theme="angel"] .welcome-eyebrow,
+:root[data-theme="angel"] .online-dot + span,
+:root[data-theme="angel"] .project-label,
+:root[data-theme="angel"] .status-brand-dot{color:#218cbf}
+:root[data-theme="angel"] .online-dot,
+:root[data-theme="angel"] .preview-live-dot,
+:root[data-theme="angel"] .modified-dot,
+:root[data-theme="angel"] .status-brand-dot{background:#29a5df;box-shadow:0 0 8px #29a5df88}
+:root[data-theme="angel"] .tab.is-active{box-shadow:inset 0 3px 0 #38b5ed}
+
+
+/* BadDev V 1.2 / Etapa G — consola Python opcional */
+.python-panel{min-height:180px;flex:1;display:flex;flex-direction:column;gap:12px;overflow:auto;padding:18px;background:var(--editor,#0b0b0b);color:var(--text,#f5f5f5);}
+#python-panel[hidden],#python-quick-run[hidden]{display:none!important;}
+.preview-panel.is-python #preview-frame{display:none!important;}
+.python-title-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px;letter-spacing:.8px;}
+.python-dot{height:9px;width:9px;border-radius:50%;background:#ff1744;box-shadow:0 0 15px #ff174477;}
+#python-status{font-size:11px;color:var(--muted,#999);letter-spacing:0;line-height:1.5;flex:1;min-width:150px;}
+.python-engines{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.python-engines label{font-size:11px;color:var(--muted,#aaa);}
+#python-engine{background:var(--panel,#151515);color:var(--text,#eee);border:1px solid var(--border,#373737);border-radius:8px;min-width:125px;max-width:100%;padding:9px 7px;flex:1;}
+.python-engines .btn{padding:9px 12px;border-radius:8px;font-size:12px;}
+.python-engine-help,.python-security{font-size:11px;color:var(--muted,#999);line-height:1.65;margin:0;overflow-wrap:anywhere;}
+.python-input-label{font-size:12px;font-weight:700;}
+#python-input{resize:vertical;min-height:55px;max-height:120px;background:var(--panel,#131313);color:var(--text,#eee);font:12px/1.5 Consolas,monospace;border:1px solid var(--border,#333);border-radius:9px;padding:9px;}
+.python-output{flex:1;min-height:130px;margin:0;padding:17px;background:#0c1014;color:#c3ebd7;border:1px solid #39434a;border-radius:12px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 Consolas,monospace;}
+.python-security code{color:var(--hover,#ff1744);font-weight:700;}
+.python-quick-run{align-self:center;flex:none;padding:7px 10px;background:#1c1116;border:1px solid #823349;color:#ff96b0;border-radius:7px;font-size:11px;font-weight:750;}
+.python-quick-run:hover{background:#3a1824;box-shadow:0 0 15px #ff174447;}
+:root[data-theme="angel"] .python-panel{background:#f7fcf0;color:#23506b;}
+:root[data-theme="angel"] .python-output{background:#e4f4fa;color:#144f65;border-color:#a9d7eb;}
+:root[data-theme="angel"] .python-quick-run{background:#dceff9;color:#156b96;border-color:#89c7e6;}
+@media(max-width:760px){.python-panel{padding:12px;gap:8px}.python-engines{gap:5px}.python-engines .btn{padding:8px 9px}.python-output{min-height:100px}}
+</style></head>
+  <body>
+    <a href="#editor-stage" class="skip-link">Saltar al espacio de edición</a>
+    <div id="startup-splash" class="startup-splash" role="status" aria-label="Iniciando BadDev">
+      <div class="splash-content">
+        <div class="splash-glow" aria-hidden="true"></div>
+        <div class="splash-logo-frame"><img src="./public/baddev-logo-v12.svg" alt="Logotipo completo de BadDev: diablito rojo con símbolos de código" /></div>
+        <h2>BAD<span>DEV</span></h2>
+        <p>CODE WITHOUT MERCY.</p>
+        <div class="splash-line" aria-hidden="true"><span></span></div>
+        <button class="splash-skip" id="skip-splash" type="button">Entrar ahora →</button>
+      </div>
+    </div>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="brand brand-home" type="button" data-action="home" title="Volver al inicio de BadDev" aria-label="Ir al menú principal de BadDev">
+            <img src="./public/baddev-logo-v12.svg" alt="Diablito minimalista y símbolo de código menor y mayor" class="brand-logo" />
+            <div class="brand-copy">
+              <strong>Bad<span>Dev</span></strong>
+              <small>CODE WITHOUT MERCY.</small>
+            </div>
+          </button>
+          <nav class="menubar" aria-label="Menú principal">
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="file" aria-expanded="false" aria-haspopup="true">Archivo <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="file" hidden>
+                <button data-action="new">Nuevo archivo <kbd>Ctrl+N</kbd></button>
+                <button data-action="new-project">Nuevo proyecto</button>
+                <button data-action="open-folder">Abrir carpeta / proyecto</button>
+                <button data-action="import-folder">Importar carpeta (alternativa)</button>
+                <button data-action="open">Abrir archivos <kbd>Ctrl+O</kbd></button>
+                <span class="menu-rule"></span>
+                <button data-action="save">Guardar <kbd>Ctrl+S</kbd></button>
+                <button data-action="save-as">Guardar como...</button>
+                <button data-action="save-project">Guardar proyecto en carpeta</button>
+                <button data-action="export-zip">Descargar proyecto ZIP</button>
+                <span class="menu-rule"></span>
+                <button data-action="close-project">Cerrar proyecto y volver al menú</button>
+                <button data-action="recover-backup">Recuperar respaldo local (emergencia)</button>
+                <span class="menu-rule"></span>
+                <button data-action="close">Cerrar pestaña <kbd>Ctrl+W</kbd></button>
+              </div>
+            </div>
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="edit" aria-expanded="false" aria-haspopup="true">Editar <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="edit" hidden>
+                <button data-action="undo">Deshacer <kbd>Ctrl+Z</kbd></button>
+                <button data-action="redo">Rehacer <kbd>Ctrl+Y</kbd></button>
+                <span class="menu-rule"></span>
+                <button data-action="find">Buscar <kbd>Ctrl+F</kbd></button>
+                <button data-action="replace">Buscar y reemplazar <kbd>Ctrl+H</kbd></button>
+                <button data-action="format">Ordenar código (Prettier)</button>
+                <button data-action="check-syntax">Comprobar JSON / XML / YAML</button>
+                <span class="menu-rule"></span>
+                <button data-action="comment">Comentar / descomentar <kbd>Ctrl+/</kbd></button>
+                <button data-action="fold-block">Contraer bloque</button>
+                <button data-action="unfold-block">Expandir bloque</button>
+              </div>
+            </div>
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="view" aria-expanded="false" aria-haspopup="true">Ver <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="view" hidden>
+                <button data-action="toggle-sidebar" id="sidebar-menu-item">Ocultar explorador</button>
+                <button data-action="format">Ordenar código</button>
+                <button data-action="check-syntax">Comprobar sintaxis</button>
+                <button data-action="toggle-preview" id="preview-menu-item">Mostrar vista previa</button>
+                <button data-action="settings">Configuración del editor</button>
+              </div>
+            </div>
+            <div class="menu-wrap">
+              <button class="menu-trigger" data-menu="help" aria-expanded="false" aria-haspopup="true">Ayuda <span class="menu-chevron">⌄</span></button>
+              <div class="dropdown" data-dropdown="help" hidden>
+                <button data-action="learn">¿Nuevo en esto? — Learn</button>
+                <button data-action="shortcuts">Atajos disponibles</button>
+                <button data-action="about">Acerca de BadDev</button>
+              </div>
+            </div>
+          </nav>
+        </div>
+        <div class="topbar-actions">
+          <span class="phase-chip" id="version-chip">V 1.2 <span class="online-dot"></span></span>
+          <button class="btn btn-quiet top-open" data-action="open-folder" title="Abrir carpeta de proyecto">Carpeta</button>
+          <button class="btn btn-outline top-close-project" data-action="close-project" title="Cerrar proyecto guardado y volver al menú">Cerrar proyecto</button>
+          <button class="btn btn-outline top-preview" data-action="toggle-preview" aria-pressed="false" title="Mostrar u ocultar la vista previa">▶ Vista previa</button>
+          <button class="icon-button top-settings" data-action="settings" title="Configuración del editor" aria-label="Configuración del editor">⚙</button>
+          <button class="btn btn-primary" data-action="save" title="Guardar el archivo actual (Ctrl+S)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h13l3 3v13H4zM7 4v6h9V4M8 20v-7h8v7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            Guardar
+          </button>
+        </div>
+      </header>
+
+      <div class="workspace" id="workspace">
+        <aside class="sidebar" id="sidebar" aria-label="Explorador de archivos">
+          <div class="sidebar-title"><span class="sidebar-heading">EXPLORADOR</span><span class="sidebar-count" id="file-count">0</span></div>
+          <div class="project-banner">
+            <div><span class="project-label">PROYECTO ACTUAL</span><strong id="project-name">Archivos sueltos</strong></div>
+            <button class="icon-button" data-action="new-project" title="Nuevo proyecto HTML, CSS y JS" aria-label="Nuevo proyecto">+</button>
+            <button class="icon-button" data-action="open-folder" title="Abrir carpeta de proyecto" aria-label="Abrir carpeta">▣</button>
+          </div>
+          <div class="side-section">
+            <div class="side-section-heading">ARCHIVOS ABIERTOS
+              <div class="side-section-actions">
+                <button class="icon-button" data-action="new" title="Nuevo archivo (Ctrl+N)" aria-label="Nuevo archivo">+
+                </button>
+                <button class="icon-button" data-action="open" title="Abrir archivos (Ctrl+O)" aria-label="Abrir archivos">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 7V5h7l2 2h9v12H3zM7 13h10M12 9v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="file-tools">
+              <label class="file-filter-label" for="file-filter">Filtrar archivos abiertos</label>
+              <input id="file-filter" class="file-filter" type="search" placeholder="⌕ Buscar archivo..." aria-label="Filtrar archivos abiertos" autocomplete="off" />
+              <button class="icon-button sort-button" id="sort-button" data-action="sort-files" title="Ordenar archivos por nombre" aria-label="Ordenar archivos por nombre">⇅</button>
+            </div>
+            <div id="file-list" class="file-list" role="list" aria-label="Archivos abiertos"></div>
+            <p id="filter-empty" class="empty-sidebar" hidden>Ningún archivo coincide con la búsqueda.</p>
+            <p id="empty-sidebar" class="empty-sidebar">Todavía no hay archivos abiertos.</p>
+          </div>
+          <div class="sidebar-bottom" id="sidebar-tip" aria-label="Consejos de BadDev">
+            <div class="sidebar-tip-icon" aria-hidden="true">✦</div>
+            <p class="sidebar-tip-content" id="sidebar-tip-content"><strong id="sidebar-tip-title">Tu espacio creativo.</strong><span id="sidebar-tip-description">Trabaja con carpetas y archivos relacionados. Puedes exportar tu proyecto en ZIP.</span></p>
+            <div class="sidebar-tip-pips" id="sidebar-tip-pips" aria-hidden="true"><span class="is-active"></span><span></span><span></span></div>
+          </div>
+        </aside>
+
+        <main class="main-panel">
+          <div class="tabs-bar" id="tabs-bar" aria-label="Pestañas de archivos">
+            <div id="tabs" class="tabs" role="tablist" aria-label="Pestañas abiertas"></div>
+            <button id="python-quick-run" class="btn python-quick-run" data-action="run-python" hidden title="Ejecutar Python en BadDev">▶ Python</button>
+            <button id="tab-add" class="tabs-add" data-action="new" title="Crear una pestaña nueva" aria-label="Crear archivo nuevo">+</button>
+            <div class="tabs-spacer"></div>
+            <button class="icon-button tabs-tool" data-action="find" title="Buscar en el archivo (Ctrl+F)" aria-label="Buscar texto">⌕</button>
+            <button class="icon-button tabs-tool" data-action="format" title="Ordenar código" aria-label="Ordenar código">{ }</button>
+            <button class="icon-button tabs-tool" data-action="replace" title="Buscar y reemplazar (Ctrl+H)" aria-label="Buscar y reemplazar">⇄</button>
+            <button class="icon-button tabs-tool" data-action="toggle-preview" title="Vista previa del proyecto" aria-label="Vista previa">◧</button>
+            <span class="workspace-label">BADDEV / WORKSPACE</span>
+          </div>
+
+          <section class="editor-stage" id="editor-stage">
+            <div id="welcome" class="welcome">
+              <div class="code-rain" id="code-rain" aria-hidden="true"></div>
+              <div class="welcome-halo" aria-hidden="true"></div>
+              <div class="welcome-content">
+                <div class="welcome-mark"><img src="./public/baddev-logo-v12.svg" alt="Logo BadDev" /></div>
+                <div class="welcome-eyebrow"><span class="tiny-red-line"></span> THE CODE STARTS HERE <span class="hero-caret" aria-hidden="true"></span></div>
+                <h1>Make something <em>dangerous.</em></h1>
+                <p>Un espacio sin distracciones para escribir en 12 lenguajes y tecnologías. Todo empieza con una línea de código.</p>
+                <div class="welcome-actions">
+                  <button class="btn btn-primary btn-large" data-action="new-project">+ Nuevo proyecto</button>
+                  <button class="btn btn-outline btn-large" data-action="open-folder">Abrir proyecto</button>
+                  <button class="btn btn-quiet btn-large" data-action="new">Archivo suelto</button>
+                  <button class="btn btn-outline btn-large welcome-learn" data-action="learn" title="Abrir la guía BadDev Learn">¿Nuevo en esto? ↗</button>
+                </div>
+                <p class="welcome-workflow">Para continuar otro día, guarda tu proyecto en una carpeta o descarga el ZIP. Al volver a BadDev, usa <strong>Abrir proyecto</strong>.</p>
+                <div class="welcome-hint"><span class="keycap">Ctrl</span><span class="plus-sign">+</span><span class="keycap">N</span> para comenzar desde cero</div>
+              </div>
+              <div class="welcome-decor" aria-hidden="true"><span>V 1.2</span><span>12 LENGUAJES / LEARN</span></div>
+            </div>
+            <div id="editor-host" class="editor-host" hidden aria-label="Editor de código"></div>
+            <aside id="preview-panel" class="preview-panel" hidden aria-label="Vista previa aislada">
+              <div class="preview-toolbar">
+                <div class="preview-heading"><span class="preview-live-dot"></span><strong>VISTA PREVIA</strong></div>
+                <select id="preview-size" aria-label="Tamaño de vista previa" title="Dispositivo"><option value="desktop">Escritorio</option><option value="tablet">Tablet</option><option value="mobile">Móvil</option></select>
+                <label class="auto-preview-label"><input id="preview-auto" type="checkbox" /> Auto</label>
+                <select id="preview-entry" title="Archivo compatible a visualizar" aria-label="Archivo compatible a visualizar"></select>
+                <button class="icon-button" data-action="refresh-preview" title="Actualizar vista previa" aria-label="Actualizar vista previa">↻</button>
+                <button class="icon-button" data-action="detach-preview" title="Abrir vista previa en nueva pestaña" aria-label="Abrir en nueva pestaña">↗</button>
+                <button class="icon-button" data-action="toggle-preview" title="Cerrar vista previa" aria-label="Cerrar vista previa">×</button>
+              </div>
+              <section id="python-panel" class="python-panel" hidden aria-label="Consola Python">
+                <div class="python-title-row"><span class="python-dot"></span><strong>PYTHON / BADDEV</strong><span id="python-status" role="status" aria-live="polite">Elige un motor y pulsa Ejecutar.</span></div>
+                <div class="python-engines"><label for="python-engine">Ejecutar con</label>
+                  <select id="python-engine" aria-label="Motor Python"><option value="browser">Navegador · Pyodide</option><option value="local">Windows · Python local</option></select>
+                  <button id="python-run" type="button" class="btn btn-primary" title="Ejecutar el archivo Python seleccionado">▶ Ejecutar</button>
+                  <button id="python-stop" type="button" class="btn btn-outline" title="Detener ejecución Python" disabled>■ Detener</button>
+                </div>
+                <p id="python-engine-help" class="python-engine-help">Pyodide ejecuta Python en el navegador. Primera carga: Internet necesario. No tiene acceso directo a tus archivos de Windows.</p>
+                <label for="python-input" class="python-input-label">Entrada para input() (opcional, una respuesta por línea)</label>
+                <textarea id="python-input" rows="2" placeholder="Escribe aquí las respuestas para input()…" spellcheck="false"></textarea>
+                <pre id="python-output" class="python-output" role="log" aria-live="polite">La salida de print() aparecerá aquí. Python no se ejecuta automáticamente.</pre>
+                <p class="python-security">Python local se habilita únicamente cuando inicias <code>npm run python:bridge</code>. Ejecuta solo código que comprendas o provenga de fuentes confiables.</p>
+              </section>
+              <iframe id="preview-frame" title="Visualizar archivos compatibles en entorno aislado" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+              <div class="preview-console"><div class="preview-console-title">CONSOLA / DIAGNÓSTICOS / AVISOS <span id="preview-error-count">0</span> <button id="clear-errors" type="button" data-action="clear-errors">Limpiar</button></div>
+                <div id="preview-errors" class="preview-errors" role="log" aria-live="polite"><p>Sin errores detectados.</p></div>
+              </div>
+            </aside>
+          </section>
+
+          <footer class="statusbar" aria-label="Estado del editor">
+            <div class="status-left"><span class="status-brand-dot"></span><span id="status-save" aria-live="polite">Listo para crear</span><span class="status-separator"></span><span id="status-file">Sin archivo</span></div>
+            <div class="status-right"><span id="backup-status" class="backup-status" title="Respaldo de emergencia. No equivale a guardar en Windows y no se restaura automáticamente." aria-live="polite">Guarda o exporta tu proyecto</span><span class="status-separator"></span><span id="status-pos">Ln —, Col —</span><span class="status-separator"></span><span id="status-lang">—</span><span class="status-separator"></span><span id="status-indent">Espacios: 2</span><span class="status-separator"></span><span class="status-version" id="status-version">BadDev V 1.2</span></div>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <dialog id="new-project-dialog" class="app-dialog" aria-labelledby="new-project-title">
+      <form id="new-project-form" class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">NEW PROJECT</span><button type="button" class="modal-close" data-action="cancel-project" aria-label="Cerrar">×</button></div>
+        <h2 id="new-project-title">Nuevo proyecto web</h2>
+        <p>Se crearán index.html, style.css y script.js listos para usar.</p>
+        <label for="new-project-name">Nombre del proyecto</label>
+        <input id="new-project-name" maxlength="70" value="Mi proyecto BadDev" required />
+        <p id="new-project-hint" class="field-hint">Luego podrás guardarlo en una carpeta o descargar su ZIP.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="cancel-project">Cancelar</button><button type="submit" class="btn btn-primary">Crear proyecto</button></div>
+      </form>
+    </dialog>
+    <dialog id="new-file-dialog" class="app-dialog" aria-labelledby="new-file-title">
+      <form id="new-file-form" class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">NEW FILE</span><button type="button" class="modal-close" data-action="cancel-new" aria-label="Cerrar">×</button></div>
+        <h2 id="new-file-title">Crear un archivo</h2>
+        <p>Elige el lenguaje y crea tu archivo. La vista previa de esta etapa funciona con HTML, Markdown, JSON y TypeScript.</p>
+        <label for="new-file-type">Lenguaje</label>
+        <select id="new-file-type" name="type"><option value="html">HTML</option><option value="css">CSS</option><option value="js">JavaScript</option><option value="ts">TypeScript</option><option value="py">Python</option><option value="php">PHP</option><option value="json">JSON</option><option value="md">Markdown</option><option value="sql">SQL</option><option value="scss">SCSS</option><option value="xml">XML</option><option value="yaml">YAML</option><option value="txt">Texto</option></select>
+        <label for="new-file-name">Nombre del archivo</label>
+        <input id="new-file-name" name="filename" maxlength="100" value="index.html" spellcheck="false" required />
+        <p class="field-hint" id="new-file-hint">Los archivos sin guardar aparecen con un punto rojo.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="cancel-new">Cancelar</button><button type="submit" class="btn btn-primary">Crear archivo</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="rename-dialog" class="app-dialog" aria-labelledby="rename-title">
+      <form id="rename-form" class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">RENAME FILE</span><button type="button" class="modal-close" data-action="cancel-rename" aria-label="Cerrar">×</button></div>
+        <h2 id="rename-title">Renombrar archivo</h2>
+        <p>El nuevo nombre cambia la pestaña de BadDev. Si tenía un archivo guardado en el equipo, guardarás una copia con el nuevo nombre.</p>
+        <label for="rename-name">Nombre nuevo</label>
+        <input id="rename-name" maxlength="100" spellcheck="false" required />
+        <p class="field-hint" id="rename-hint">Elige una extensión compatible con BadDev.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="cancel-rename">Cancelar</button><button type="submit" class="btn btn-primary">Renombrar</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="settings-dialog" class="app-dialog" aria-labelledby="settings-title">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">EDITOR SETTINGS</span><button type="button" class="modal-close" data-action="close-settings" aria-label="Cerrar">×</button></div>
+        <h2 id="settings-title">Personalizar editor</h2>
+        <p>Los cambios se aplican al instante y se recuerdan en este navegador. Las pestañas abiertas se respaldan automáticamente aquí, sin modificar archivos de Windows.</p>
+        <label for="theme-select">Tema de BadDev</label>
+        <select id="theme-select"><option value="demon">Demon Red</option><option value="purple">Inferno Purple</option><option value="green">Toxic Green</option><option value="angel">Angelical Water</option><option value="slayer">Dev Slayer</option></select>
+        <label for="font-size">Tamaño de letra: <output id="font-value" for="font-size">14 px</output></label>
+        <input id="font-size" type="range" min="12" max="22" step="1" value="14" />
+        <label for="tab-size">Espacios para la indentación</label>
+        <select id="tab-size"><option value="2">2 espacios</option><option value="4">4 espacios</option></select>
+        <label class="settings-check" for="word-wrap"><input id="word-wrap" type="checkbox" /> Ajustar las líneas largas al ancho de la ventana</label>
+        <div class="dialog-actions"><button type="button" class="btn btn-quiet" data-action="reset-settings">Restablecer</button><button type="button" class="btn btn-primary" data-action="close-settings">Listo</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="info-dialog" class="app-dialog" aria-labelledby="info-title">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">BADDEV / INFO</span><button type="button" class="modal-close" data-action="close-info" aria-label="Cerrar">×</button></div>
+        <h2 id="info-title">BadDev</h2>
+        <div id="info-content" class="info-content"></div>
+        <div class="dialog-actions"><button type="button" class="btn btn-primary" data-action="close-info">Entendido</button></div>
+      </div>
+    </dialog>
+
+
+    <dialog id="diagnostics-dialog" class="app-dialog diagnostics-dialog" aria-labelledby="diagnostics-title">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">BADDEV / SINTAXIS</span><button type="button" class="modal-close" data-action="close-diagnostics" aria-label="Cerrar diagnósticos">×</button></div>
+        <h2 id="diagnostics-title">Comprobación de sintaxis</h2>
+        <p id="diagnostics-name" class="field-hint">Selecciona JSON, XML o YAML.</p>
+        <div id="diagnostics-list" class="diagnostics-list" role="list" aria-live="polite"></div>
+        <p class="field-hint">Pulsa un error para ir a la línea. No se ejecuta el contenido del archivo.</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-primary" data-action="close-diagnostics">Cerrar</button></div>
+      </div>
+    </dialog>
+
+    <dialog id="unsaved-dialog" class="app-dialog unsaved-dialog" aria-labelledby="unsaved-title" aria-describedby="unsaved-description">
+      <div class="dialog-inner">
+        <div class="dialog-head"><span class="dialog-tag">BADDEV / PROTEGER TU TRABAJO</span><button type="button" id="unsaved-cancel" class="modal-close" aria-label="Cancelar cierre">×</button></div>
+        <h2 id="unsaved-title">¿Guardar antes de salir?</h2>
+        <p id="unsaved-description">Tienes cambios sin guardar. Guarda tu archivo en un proyecto o elige descartarlo.</p>
+        <p id="unsaved-error" class="field-hint" role="status" aria-live="polite"></p>
+        <div class="unsaved-options">
+          <button type="button" id="unsaved-save-folder" class="btn btn-primary">Guardar en…</button>
+          <button type="button" id="unsaved-save-as" class="btn btn-outline">Guardar como…</button>
+          <button type="button" id="unsaved-discard" class="btn unsaved-discard">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true"><path d="M12 20.5 4.1 12.7C-1 7.8 5.1 0.9 10.3 5.7l1.7 1.6 1.7-1.6C18.9 0.9 25 7.8 19.9 12.7L12 20.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m13.5 3.4-3.2 6.1 3.5 1.4-3.1 5.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            No guardar
+          </button>
+        </div>
+        <button type="button" class="unsaved-back" id="unsaved-back">Cancelar, seguir editando</button>
+      </div>
+    </dialog>
+    <input type="file" id="native-folder-input" webkitdirectory directory multiple hidden />
+    <input type="file" id="native-file-input" accept=".html,.htm,.css,.js,.mjs,.ts,.py,.php,.json,.md,.sql,.scss,.xml,.yaml,.yml,.txt" multiple hidden />
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    
+  </body>
+</html>
