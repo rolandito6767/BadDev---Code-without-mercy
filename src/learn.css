@@ -1,0 +1,467 @@
+:root { color-scheme:dark; --bg:#090909;--panel:#111;--panel2:#161616;--red:#d90b2b;--hover:#ff1744;--text:#f5f5f5;--muted:#a0a0a0;--border:#252525;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg);color:var(--text);font-synthesis:none; }
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;min-height:100%;width:100%}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible,textarea:focus-visible{outline:2px solid #ff1744;outline-offset:3px}
+[hidden]{display:none!important}
+.learn-app{min-height:100vh;background:#090909}
+.learn-top{height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 30px;background:#101010;border-bottom:1px solid #272727;position:sticky;top:0;z-index:20}
+.learn-brand{display:flex;gap:10px;align-items:center}
+.learn-brand img{width:65px;height:48px;object-fit:contain}
+.learn-brand div{display:flex;flex-direction:column;gap:2px}
+.learn-brand strong{font-size:20px;line-height:1;letter-spacing:-.7px}
+.learn-brand strong span{color:var(--hover)}
+.learn-brand small{letter-spacing:2.2px;color:#b88692;font-size:8.5px;font-weight:750}
+.learn-top-actions{display:flex;align-items:center;gap:16px}
+.version-badge{display:inline-flex;align-items:center;padding:9px 13px;border:1px solid #383035;border-radius:7px;color:#df8da0;background:#1b1517;font-size:12px;font-weight:800;white-space:nowrap}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid transparent;font-size:13px;font-weight:750;min-height:43px;transition:background 180ms,border-color 180ms,box-shadow 180ms,color 180ms}
+.button-primary{color:#fff;background:var(--red);border-color:#ed1640}
+.button-primary:hover:not(:disabled){background:var(--hover);box-shadow:0 0 20px #ff174473,0 0 34px #d90b2b38}
+.button-secondary{background:#1a1416;color:#f0dfe3;border-color:#642a39}
+.button-secondary:hover:not(:disabled){border-color:var(--hover);background:#361420;box-shadow:0 0 18px #ff174461,0 0 31px #d90b2b29}
+button:disabled{opacity:.53;cursor:not-allowed}
+.learn-layout{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:calc(100vh - 76px)}
+.learn-sidebar{background:#101010;border-right:1px solid var(--border);padding:28px 17px 36px;display:flex;flex-direction:column;gap:18px}
+.small-tag,.section-label,.eyebrow{letter-spacing:2.1px;font-size:10px;color:#f24969;font-weight:850;text-transform:uppercase}
+.route-heading{padding:0 10px}
+.route-heading h2{font-size:22px;margin:12px 0 7px;line-height:1.2;letter-spacing:-.7px}
+.route-heading p{color:#aaa;font-size:12px;line-height:1.7;margin:0}
+.progress-card{border:1px solid #3d242c;border-radius:14px;padding:16px;background:#1a1215}
+.progress-meta{display:flex;align-items:center;justify-content:space-between;font-size:12px}
+.progress-meta output{color:#ff6683;font-weight:800}
+.progress-track{width:100%;height:7px;border-radius:100px;background:#332127;overflow:hidden;margin-top:12px}
+.progress-track span{display:block;height:100%;width:0;background:#ff1744;border-radius:100px;box-shadow:0 0 10px #ff1744;transition:width 220ms}
+.progress-card p{color:#9c848b;font-size:11px;margin:9px 0 0}
+.learn-nav{display:grid;gap:20px}
+.nav-group h3{font-size:10px;text-transform:uppercase;letter-spacing:1.6px;color:#8f8f8f;margin:0 0 8px 12px}
+.lesson-link{width:100%;display:flex;align-items:center;gap:11px;text-align:left;color:#bcbcbc;background:transparent;border:1px solid transparent;border-radius:9px;padding:10px 9px;font-size:12px;transition:background 180ms,border-color 180ms,box-shadow 180ms}
+.lesson-link:hover{background:#30141c;border-color:#a52843;box-shadow:0 0 14px #d90b2b36;color:#fff}
+.lesson-link.active{background:#281319;color:#fff;border-color:#782338}
+.nav-number{font-family:Consolas,monospace;color:#ff5776;border:1px solid #51303a;border-radius:6px;min-width:28px;height:27px;display:grid;place-items:center;font-size:11px;font-weight:800}
+.lesson-link.active .nav-number{background:#d90b2b;color:#fff}
+.subtle-button,.small-button{padding:10px 13px;border:1px solid #51313a;border-radius:8px;background:#211519;color:#f3d5dc;font-size:12px;transition:background 180ms,border-color 180ms,box-shadow 180ms}
+.subtle-button:hover,.small-button:hover{border-color:#ff1744;background:#3b1722;box-shadow:0 0 17px #ff17444a}
+.reset-button{margin-top:6px;align-self:stretch}
+.learn-main{min-width:0;max-width:1380px;width:100%;margin:0 auto;padding:25px clamp(17px,4vw,65px) 28px}
+.learn-intro-strip{display:flex;align-items:center;gap:12px;font-size:10px;color:#b4b4b4;letter-spacing:1.65px;margin:0 0 22px}
+.learn-intro-strip #section-tag{color:#ff607a;margin-left:auto}
+.signal-dot{height:7px;width:7px;flex:0 0 7px;border-radius:50%;background:#ff1744;box-shadow:0 0 12px #ff1744}
+.lesson-heading{background:linear-gradient(120deg,#2c101927,transparent 65%),#101010;border:1px solid #35232a;border-radius:23px;padding:clamp(25px,4vw,48px);position:relative;overflow:hidden}
+.lesson-heading:after{content:'';position:absolute;width:280px;height:280px;border-radius:50%;right:-130px;top:-145px;background:#c4002730;filter:blur(65px);pointer-events:none}
+.lesson-heading h1{font-size:clamp(32px,4.6vw,56px);line-height:1.08;letter-spacing:-1.9px;margin:13px 0 14px;max-width:780px}
+.lesson-lede{font-size:clamp(13px,1.55vw,17px);color:#bebebe;line-height:1.65;max-width:760px;margin:0 0 18px}
+.completion-tag{display:inline-flex;padding:8px 11px;border:1px solid #57323b;border-radius:99px;background:#26141a;color:#f5a8ba;font-size:11px;font-weight:750}
+.lesson-body{margin-top:19px;display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.88fr);gap:18px;align-items:start}
+.content-card{background:#111;border:1px solid #282828;border-radius:18px;padding:clamp(20px,2.7vw,30px);min-width:0}
+.content-card h2{font-size:22px;letter-spacing:-.5px;margin:10px 0 15px}
+.content-card p{color:#b9b9b9;line-height:1.78;font-size:13.7px;margin:10px 0}
+.lesson-body .content-card:first-child{grid-row:span 2}
+.tip-box{margin-top:22px;border:1px solid #4b2632;background:#1b1216;border-radius:13px;padding:18px}
+.tip-box strong{font-size:13px;color:#ff93a9}
+.tip-box ul{padding-left:18px;color:#d0bdc2;line-height:1.8;font-size:12px}
+.code-title{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#fa7890;font-size:11px;font-weight:800;letter-spacing:.7px;margin-top:18px}
+.code-example{white-space:pre;max-width:100%;overflow-x:auto;padding:17px 18px;background:#0b0d10;border:1px solid #333136;border-radius:13px;color:#d9e5ff;font:12.5px/1.8 Consolas,"Courier New",monospace;tab-size:2;margin:12px 0}
+.example-note{color:#aaa;font-style:italic}
+.practice-row{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:17px}
+.practice-row span{color:#868686;font-size:11px;line-height:1.5}
+.practice-card{grid-column:2}
+.challenge-question{color:#f0e4e8!important;font-weight:650;font-size:14px!important}
+.answer-choices{display:grid;gap:8px;margin:18px 0}
+.choice-button{text-align:left;display:flex;align-items:center;gap:13px;background:#161616;color:#ddd;border:1px solid #353035;border-radius:11px;padding:12px;line-height:1.5;transition:background 180ms,border-color 180ms,box-shadow 180ms}
+.choice-button span{min-width:27px;height:27px;display:grid;place-items:center;border:1px solid #51313a;color:#ff9aac;border-radius:6px;font-weight:800;font-size:12px}
+.choice-button:hover,.choice-button.is-selected{background:#30151e;border-color:#ff1744;box-shadow:0 0 13px #ff17443a}
+.code-label{display:block;margin:12px 0 8px;font-size:12px;color:#b5b5b5}
+#student-code{background:#0b0d10;border:1px solid #42333b;border-radius:11px;resize:vertical;min-height:135px;width:100%;padding:13px 15px;color:#e8efff;font:12.5px/1.7 Consolas,monospace;tab-size:2}
+.validation-note{font-size:11px!important;color:#91888b!important}
+.challenge-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+.hint-message{padding:11px 13px;border-radius:9px;background:#241922;border:1px solid #523140;color:#f3a5b7!important;font-size:12px!important}
+.feedback{font-size:12.5px!important;color:#b8b8b8!important;border:1px solid #333;border-radius:11px;padding:12px 14px;background:#181818;margin:15px 0 0!important}
+.feedback-success{background:#101d15;border-color:#287244;color:#b8f4cb!important}
+.feedback-error{background:#271219;border-color:#9b304c;color:#ffd1d9!important}
+.bottom-nav{display:flex;justify-content:space-between;gap:10px;margin:23px 0 19px}
+.learn-footer{text-align:center;border-top:1px solid #292929;color:#666;font-size:10px;letter-spacing:1.45px;padding:20px 0 2px}
+.learn-splash{position:fixed;inset:0;background:#090909;z-index:50;display:grid;place-items:center;text-align:center;overflow:hidden;opacity:1;transition:opacity 400ms,visibility 400ms}
+.learn-splash.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
+.learn-splash-inner{padding:30px;position:relative;width:min(94vw,640px)}
+.learn-splash-inner:before{content:'';position:absolute;z-index:-1;inset:8% 10%;background:#ec11352b;filter:blur(85px);border-radius:50%;animation:glowPulse 2400ms ease-in-out infinite}
+.learn-splash-inner img{width:min(57vw,280px);height:min(31vh,170px);max-height:170px;object-fit:contain;filter:drop-shadow(0 0 25px #ff174457);animation:floatLogo 2200ms ease-in-out infinite}
+.learn-splash h1{font-size:clamp(27px,5vw,46px);letter-spacing:-1px;line-height:1.15;margin:10px 0}
+.learn-splash h1 span{color:#ff1744}
+.splash-subtitle{font-size:13px;color:#aaa}
+.splash-progress{height:3px;background:#39131e;margin:29px auto 14px;width:min(75%,280px);overflow:hidden;border-radius:100px}
+.splash-progress span{height:100%;width:100%;display:block;background:#ff1744;box-shadow:0 0 12px #ff1744;transform:translateX(-100%);animation:loadBar 2500ms linear forwards}
+.toast{position:fixed;right:18px;bottom:16px;z-index:60;background:#24161b;border:1px solid #7b3346;border-radius:11px;padding:12px 16px;color:#fff;font-size:12px;opacity:0;transform:translateY(12px);transition:opacity 180ms,transform 180ms;pointer-events:none;max-width:min(420px,90vw)}
+.toast.visible{opacity:1;transform:translateY(0)}
+.skip-link{position:absolute;left:10px;top:-70px;z-index:70;padding:12px;background:#35131f;border:1px solid #ff1744;border-radius:9px}
+.skip-link:focus{top:10px}
+@keyframes loadBar{to{transform:translateX(0)}}
+@keyframes floatLogo{50%{transform:translateY(-7px)}}
+@keyframes glowPulse{50%{opacity:.45}}
+@media(max-width:1100px){.lesson-body{grid-template-columns:1fr}.lesson-body .content-card:first-child{grid-row:auto}.practice-card{grid-column:auto}}
+@media(max-width:820px){.learn-layout{grid-template-columns:1fr}.learn-sidebar{border-right:0;border-bottom:1px solid #333;padding:18px;gap:13px}.route-heading p{display:none}.route-heading h2{margin:4px 0}.learn-nav{display:flex;gap:10px;overflow-x:auto;padding-bottom:7px}.nav-group{min-width:165px}.nav-group h3{margin-left:0}.lesson-link{white-space:normal}.learn-main{padding:18px}.reset-button{align-self:flex-start}}
+@media(max-width:500px){.learn-top{height:auto;min-height:69px;padding:11px 13px}.learn-brand img{width:46px;height:38px}.learn-brand strong{font-size:18px}.learn-brand small{font-size:7px;letter-spacing:1.2px}.learn-top-actions{gap:6px}.learn-top-actions .button{font-size:11px;padding:10px}.version-badge{font-size:10px;padding:8px}.learn-main{padding:13px}.lesson-heading{padding:22px}.bottom-nav .button{font-size:11px;padding:10px}.learn-intro-strip{font-size:9px}.content-card{padding:17px}.practice-row{align-items:stretch}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}.splash-progress span{transform:none}}
+/* Avoid a horizontal navigation row expanding the whole grid on narrow devices. */
+.learn-layout,.learn-sidebar,.learn-nav,.learn-main { min-width:0; }
+@media(max-width:820px) {
+  .learn-layout { grid-template-columns:minmax(0,1fr);width:100%; }
+  .learn-sidebar { min-width:0;max-width:100%; }
+  .learn-nav {width:100%;max-width:100%;overflow-x:auto;}
+  .nav-group {flex:0 0 165px;}
+}
+
+/* V 0.8: identidad visual compartida */
+:root[data-theme="purple"] { --red:#9855ef; --hover:#bb86ff; }
+:root[data-theme="green"] { --red:#24bc69; --hover:#38d67a; }
+:root[data-theme="angel"] { --red:#2aa9eb; --hover:#6cd8ff; }
+:root[data-theme="slayer"] { --red:#ee5b13; --hover:#ff8732; }
+
+
+/* V 0.9: learn home, manual y simplificación */
+.learn-home { min-height:100vh; display:grid; place-items:center; padding:32px 18px; background:radial-gradient(circle at top, color-mix(in srgb,var(--red) 16%, transparent), transparent 42%), #08090b; }
+.learn-home-card { width:min(100%, 720px); border:1px solid color-mix(in srgb,var(--red) 26%, #252525); border-radius:28px; background:linear-gradient(180deg, color-mix(in srgb,var(--red) 10%, #131317), #0f1013 70%); box-shadow:0 24px 70px #0008, 0 0 34px color-mix(in srgb,var(--red) 26%, transparent); padding:34px 26px; text-align:center; }
+.learn-home-logo { width:min(260px,62vw); display:block; margin:0 auto 8px; filter:drop-shadow(0 0 24px color-mix(in srgb,var(--red) 34%, transparent)); }
+.learn-home-card h1 { font-size:clamp(2.4rem,8vw,4.5rem); margin:.2rem 0 .7rem; letter-spacing:.03em; }
+.learn-home-card h1 span { color:var(--red); }
+.home-subtitle { max-width:580px; margin:0 auto 1.2rem; color:var(--muted); line-height:1.7; }
+.learn-home-actions { display:grid; gap:14px; margin-top:20px; }
+.home-button { text-decoration:none; padding:16px 20px; border-radius:16px; border:1px solid color-mix(in srgb,var(--red) 28%, #353535); color:var(--text); font-weight:800; letter-spacing:.06em; text-transform:uppercase; background:#121317; transition:transform .18s, box-shadow .18s, border-color .18s, background .18s; }
+.home-button:hover { transform:translateY(-1px); border-color:var(--hover); box-shadow:0 0 26px color-mix(in srgb,var(--hover) 28%, transparent); }
+.home-button-main { background:linear-gradient(180deg, color-mix(in srgb,var(--red) 88%, white 6%), var(--red-dark)); color:#fff; }
+.home-button-main:hover { background:linear-gradient(180deg, var(--hover), color-mix(in srgb,var(--red-dark) 90%, black 6%)); }
+.home-button-ghost { background:#111216; }
+.home-note { margin-top:16px; color:var(--muted); font-size:.95rem; }
+.home-version-row { margin-top:18px; display:flex; justify-content:center; }
+.simple-layout .learn-main { padding-bottom:24px; }
+.compact-heading h1 { font-size:clamp(2rem,5vw,3rem); }
+.manual-stack { display:grid; gap:16px; }
+.compact-card { padding:20px; }
+.compact-card p { margin:.7rem 0; }
+.simple-list { margin:.5rem 0 0; padding-left:1.1rem; line-height:1.75; color:var(--muted); }
+.manual-page .learn-nav, .learn-page-lessons .learn-nav { gap:10px; }
+.manual-group-title { margin:16px 0 8px; font-size:.78rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
+.learn-page-lessons .content-card.practice-card .challenge-actions { gap:8px; flex-wrap:wrap; }
+.learn-page-lessons .lesson-lede { max-width:760px; }
+@media (max-width: 760px) {
+  .learn-home-card { padding:26px 18px; }
+  .learn-home-actions { gap:10px; }
+}
+
+/* BadDev V1.0: adapt brand artwork consistently */
+.learn-brand img{width:85px;height:48px;object-fit:contain;border-radius:6px;background:#261118}
+.learn-splash-inner>img{width:min(72vw,410px);max-height:min(32vh,240px);height:auto;object-fit:contain;border-radius:16px;}
+.learn-home-logo{width:min(480px,84vw);max-height:260px;object-fit:contain;aspect-ratio:1672/941;border-radius:20px;}
+
+
+/* BadDev V1.0.2: Learn home más compacto, con lluvia de código */
+.learn-home{position:relative;overflow:hidden;isolation:isolate;}
+.learn-home .learn-code-rain{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:paint;opacity:.95}
+.learn-home-card.learn-home-split{position:relative;z-index:1;width:min(1040px,100%);display:grid;grid-template-columns:minmax(320px,1.1fr) minmax(240px,.9fr);gap:28px;align-items:center;padding:30px 28px;text-align:left}
+.learn-home-copy{display:flex;flex-direction:column;align-items:flex-start}
+.learn-home-logo{width:min(380px,100%);max-height:210px;margin:0 0 8px;}
+.learn-home-card.learn-home-split h1{font-size:clamp(2.1rem,5vw,4rem);line-height:1.02;margin:.1rem 0 .6rem}
+.learn-home-card.learn-home-split .home-subtitle{max-width:40ch;margin:0;color:#c7b7bc;font-size:1rem;line-height:1.7}
+.learn-home-side-actions{display:grid;gap:14px;align-content:center}
+.learn-home-side-actions .home-button{min-height:64px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.learn-home-side-actions .home-button-main{box-shadow:0 0 22px color-mix(in srgb,var(--hover) 14%,transparent)}
+.learn-home .rain-bit{position:absolute;top:-40px;color:var(--hover,#ff1744);opacity:0;font:600 12px/1.4 Consolas,monospace;white-space:nowrap;text-shadow:0 0 12px color-mix(in srgb,var(--hover,#ff1744) 48%,transparent);animation:codeRainFall 10s linear forwards}
+@media (max-width: 820px){
+  .learn-home-card.learn-home-split{grid-template-columns:1fr;gap:18px;padding:24px 18px;text-align:center}
+  .learn-home-copy{align-items:center}
+  .learn-home-card.learn-home-split .home-subtitle{max-width:55ch;text-align:center}
+}
+
+@keyframes codeRainFall{0%{transform:translateY(-20px);opacity:0}12%{opacity:.28}82%{opacity:.18}100%{transform:translateY(min(88vh,740px));opacity:0}}
+@media(prefers-reduced-motion:reduce){.learn-home .rain-bit{display:none}}
+
+
+/* Corrección V 1.0.2: menú de dos tarjetas, lluvia visible y splash consistente. */
+.learn-home-v2{min-height:100svh;padding:clamp(16px,3.5vh,36px) 24px;display:grid;place-items:center;isolation:isolate;overflow:hidden;position:relative;background:radial-gradient(ellipse at 50% 0%,#3b0a19 0%,#160910 36%,#09090b 72%);}
+.learn-home-v2 .learn-code-rain{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:1;}
+.learn-home-v2 .rain-bit{position:absolute;top:-40px;color:var(--hover,#ff1744);opacity:0;font:700 12px/1.4 Consolas,monospace;white-space:nowrap;text-shadow:0 0 12px color-mix(in srgb,var(--hover,#ff1744) 75%,transparent);animation:learnRainFall var(--rain-duration,10s) linear both;will-change:transform;}
+@keyframes learnRainFall{0%{transform:translate3d(0,-20px,0);opacity:0}12%{opacity:.55}75%{opacity:.32}100%{transform:translate3d(0,calc(100vh + 100px),0);opacity:0}}
+.learn-home-v2 .learn-orbit{position:absolute;width:min(760px,80vw);height:min(760px,80vw);top:-520px;left:50%;transform:translateX(-50%);border-radius:100%;border:1px solid #78233b55;box-shadow:0 0 170px #f1123c1f;pointer-events:none}
+.learn-home-inner{width:min(970px,100%);position:relative;z-index:1}
+.learn-home-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.learn-back-link{color:#d3b5c0;text-decoration:none;font-size:13px;font-weight:700;padding:10px 13px;border-radius:9px;border:1px solid #6b304055;background:#151116e8;transition:.18s}
+.learn-back-link:hover{color:#fff;border-color:var(--hover);box-shadow:0 0 20px #ff17442b}
+.learn-hero{display:grid;grid-template-columns:minmax(205px,315px) minmax(0,1fr);gap:26px;align-items:center;margin-bottom:24px}
+.learn-hero-art{border-radius:20px;overflow:hidden;background:#170c11;box-shadow:0 0 40px #d90b2b20;border:1px solid #60203355;min-height:145px;display:flex;align-items:center;justify-content:center}
+.learn-hero-art img{display:block;width:100%;max-height:172px;object-fit:contain}
+.learn-hero-title h1{font-size:clamp(34px,4.5vw,59px);letter-spacing:-.045em;line-height:.99;margin:10px 0 12px;font-weight:850}
+.learn-hero-title h1 span{display:block;color:var(--hover)}
+.learn-hero-title p:last-child{font-size:15px;color:#bdaeb4;line-height:1.5;margin:0}
+.learn-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.learn-choice-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-height:230px;isolation:isolate;border-radius:20px;padding:25px 28px;border:1px solid #663042;background:linear-gradient(155deg,#201017f5 0%,#120e13f9 64%);box-shadow:0 16px 46px #0009;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s;text-decoration:none;color:#f5f5f5}
+.learn-choice-card:hover{transform:translateY(-4px);border-color:var(--hover);box-shadow:0 10px 45px #f1123b28,0 18px 45px #0008;background:linear-gradient(155deg,#38101ffb,#160d13fc 70%)}
+.learn-choice-card:focus-visible{outline:2px solid var(--hover);outline-offset:4px}
+.learn-choice-icon{display:flex;width:45px;height:45px;align-items:center;justify-content:center;color:#ff4168;margin-bottom:5px}
+.learn-choice-icon svg{width:42px;height:42px}
+.learn-choice-meta{font:700 10px/1.3 Consolas,monospace;letter-spacing:.21em;color:#db8195}
+.learn-choice-card strong{font-size:clamp(24px,3vw,32px);font-weight:820;letter-spacing:-.02em}
+.learn-choice-description{font-size:13px;color:#b8a8b0;line-height:1.55;max-width:32ch}
+.learn-choice-arrow{font-size:12px;margin-top:auto;padding-top:12px;font-weight:770;color:#ff829b}
+.learn-choice-manual .learn-choice-icon{color:#d5a7b2}
+.learn-choice-manual .learn-choice-arrow{color:#efbdc8}
+#learn-splash .splash-progress>span{background:#ff1744}
+@media(max-width:690px){
+  .learn-home-v2{padding:18px 14px;min-height:100svh;overflow-x:hidden;overflow-y:auto}
+  .learn-home-topline{margin-bottom:12px}
+  .learn-hero{grid-template-columns:1fr;gap:14px;text-align:center;margin-bottom:16px}
+  .learn-hero-art{width:min(265px,70vw);min-height:96px;max-height:145px;margin:0 auto}
+  .learn-hero-title h1{font-size:clamp(28px,7vw,42px)}
+  .learn-hero-title h1 span{display:inline}
+  .learn-hero-title p:last-child{font-size:13px}
+  .learn-choice-grid{grid-template-columns:1fr;gap:12px}
+  .learn-choice-card{min-height:165px;padding:17px 21px}
+  .learn-choice-icon{position:absolute;right:18px;top:18px;opacity:.55}
+}
+@media(max-height:620px) and (min-width:691px){.learn-hero-art img{max-height:128px}.learn-hero{margin-bottom:16px}.learn-choice-card{min-height:190px;padding:17px 22px}}
+@media(prefers-reduced-motion:reduce){.learn-home-v2 .rain-bit{display:none!important}.learn-choice-card{transition:none!important}}
+
+/* BadDev V1.2 — Etapa D: catálogo flotante para Manual y Lecciones. */
+.learn-language-chooser{position:relative;min-height:calc(100svh - 76px);padding:clamp(22px,5vh,54px) clamp(16px,5vw,68px) 52px;background:radial-gradient(ellipse at 50% 0,#3a0d1d99,transparent 51%),#09090b;isolation:isolate;overflow:hidden}
+.learn-language-chooser::before{content:'<> 0101  {}  1100  </>  const  =>  0011  IF  { }';position:absolute;top:15px;left:-10%;right:-10%;font:700 clamp(15px,2.8vw,34px) Consolas,monospace;letter-spacing:10px;white-space:nowrap;color:#ff174412;pointer-events:none;z-index:-1;transform:rotate(-6deg)}
+.language-chooser-top{text-align:center;max-width:760px;margin:0 auto 32px}
+.language-chooser-top h1{font-size:clamp(32px,5vw,58px);letter-spacing:-1.6px;line-height:1.08;margin:12px 0 16px;color:#f5f5f5}
+.language-chooser-top p{font-size:clamp(13px,1.4vw,15px);color:#bfb0b6;line-height:1.7;margin:0 auto;max-width:690px}
+.learn-languages-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;max-width:1200px;margin:0 auto}
+.learn-language-card{--lang-accent:#ff1744;--float-delay:0s;position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:9px;min-height:164px;padding:20px 19px;border:1px solid color-mix(in srgb,var(--lang-accent) 28%,#28202a);border-radius:17px;background:linear-gradient(160deg,#21151c,#121215 78%);box-shadow:0 12px 28px #0006;color:#f5f5f5;animation:languageFloat 5.2s ease-in-out infinite;animation-delay:var(--float-delay);transition:border-color .18s,box-shadow .18s,background .18s,transform .18s;text-decoration:none}
+.learn-language-card:hover,.learn-language-card:focus-visible{animation-play-state:paused;transform:translateY(-5px);border-color:var(--lang-accent);background:linear-gradient(160deg,color-mix(in srgb,var(--lang-accent) 18%,#1a1118),#131317 82%);box-shadow:0 0 0 1px color-mix(in srgb,var(--lang-accent) 25%,transparent),0 0 22px color-mix(in srgb,var(--lang-accent) 19%,transparent),0 19px 35px #0009;outline:none}
+.language-card-icon{display:grid;place-items:center;min-width:36px;height:34px;padding:0 7px;border:1px solid color-mix(in srgb,var(--lang-accent) 50%,transparent);border-radius:9px;background:color-mix(in srgb,var(--lang-accent) 10%,#141014);color:var(--lang-accent);font:800 12px Consolas,monospace;letter-spacing:-.3px}
+.language-card-body{display:grid;gap:6px;min-width:0}
+.language-card-body strong{font-size:clamp(15px,1.45vw,18px);font-weight:770;letter-spacing:-.3px}
+.language-card-description{font-size:11px;color:#b4aeb4;line-height:1.55}
+.language-card-ext{position:absolute;top:22px;right:20px;font:700 11px Consolas,monospace;color:color-mix(in srgb,var(--lang-accent) 65%,#aaa)}
+.language-back-control{white-space:nowrap}
+.language-intro-page{min-height:calc(100svh - 76px);background:radial-gradient(circle at top,#35102088,transparent 46%),#09090b;padding:clamp(25px,4.4vw,62px) clamp(16px,4vw,60px)}
+.language-intro-inner{max-width:1110px;margin:0 auto}
+.language-intro-heading{border:1px solid color-mix(in srgb,var(--lang-accent) 38%,#34303a);border-radius:23px;padding:clamp(25px,4.3vw,43px);background:linear-gradient(135deg,color-mix(in srgb,var(--lang-accent) 12%,#131216),#101012 78%);box-shadow:0 0 42px #0007}
+.language-intro-heading h1{font-size:clamp(33px,4.8vw,58px);letter-spacing:-1.5px;margin:10px 0}
+.language-intro-heading p{color:#bbb4bd;line-height:1.7;margin:0}
+.language-intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin:20px 0}
+.language-intro-card{padding:clamp(20px,2.5vw,28px);border:1px solid #373038;border-radius:18px;background:#131215;min-width:0}
+.language-intro-card h2{font-size:21px;margin:0 0 12px}
+.language-intro-card h3{font-size:13px;color:var(--lang-accent);margin:25px 0 12px}
+.language-intro-card p,.language-intro-card li{font-size:13px;line-height:1.8;color:#bcb5bd}
+.language-intro-card ul{padding-left:19px;margin:0}
+.language-intro-code-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.language-intro-code-head>span{font:800 11px Consolas,monospace;letter-spacing:1.5px;color:var(--lang-accent)}
+.language-intro-code-card .code-example{max-width:100%;margin:18px 0;overflow:auto;white-space:pre}
+.language-copy-status{font-size:11px!important;min-height:18px}
+.language-intro-footer{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;border:1px solid #4b3038;border-radius:15px;padding:17px 22px;background:#20151a}
+.language-intro-footer p{color:#cbadb8;font-size:12px;line-height:1.7;max-width:740px;margin:0}
+@keyframes languageFloat{0%,100%{translate:0 0}50%{translate:0 -3px}}
+@media(max-width:1100px){.learn-languages-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:780px){.learn-languages-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.language-intro-grid{grid-template-columns:1fr}.learn-language-card{min-height:155px}}
+@media(max-width:520px){.learn-language-chooser{min-height:calc(100svh - 68px);padding:25px 13px 30px}.learn-languages-grid{gap:10px}.learn-language-card{min-height:156px;padding:15px 12px}.language-card-ext{top:17px;right:13px;font-size:10px}.language-card-body strong{font-size:14px}.language-card-description{font-size:10px}.language-chooser-top h1{font-size:30px}.language-back-control{padding:8px;font-size:10px!important}.learn-top-actions{gap:6px}}
+@media(prefers-reduced-motion:reduce){.learn-language-card{animation:none!important}}
+
+/* BadDev V1.2 Etapa E: contenido educativo en módulos, sin cambiar identidad general */
+.lesson-objective{font-size:13px;line-height:1.75;color:#d7c9ce;padding:14px 17px;background:linear-gradient(90deg,#25131b,#171316);border:1px solid #4c2635;border-radius:13px;margin:16px 0 0;max-width:900px}
+.lesson-objective strong{color:#ff7a94}
+.solution-card{border-color:#563041}
+.solution-card #toggle-solution{margin:5px 0 14px}
+.solution-card #solution-detail{padding-top:8px;border-top:1px solid #342630;overflow-wrap:anywhere}
+.solution-card #solution-detail .code-example{max-width:100%;overflow:auto}
+.solution-card #solution-detail p{color:#c6bcc2;line-height:1.7}
+.summary-card{background:linear-gradient(135deg,#191116,#121215);border-color:#3d2532}
+.education-glossary{display:grid;grid-template-columns:minmax(105px,1fr) minmax(0,3fr);gap:10px 16px;margin:0;font-size:13px;line-height:1.6}
+.education-glossary dt{color:#ffa2b6;font-weight:750;overflow-wrap:anywhere}
+.education-glossary dd{margin:0;color:#c8c6cc}
+.language-practice-note{font-size:12px;line-height:1.5;color:#bc9eab;align-self:center;max-width:350px}
+@media(max-width:640px){.education-glossary{grid-template-columns:1fr;gap:3px}.education-glossary dd{margin:0 0 13px}.lesson-objective{margin-top:14px}}
+
+/* Etapa F — Angelical Water también colorea la academia, no solo el editor. */
+:root[data-theme="angel"]{color-scheme:light;--bg:#eff9ff;--panel:#fffdf0;--panel2:#e6f6ff;--text:#174660;--muted:#587b91;--red:#279ad2;--hover:#58c4f4;--border:#b9ddeb;background:var(--bg);color:var(--text)}
+:root[data-theme="angel"] .learn-app,
+:root[data-theme="angel"] .learn-sidebar,
+:root[data-theme="angel"] .learn-top,
+:root[data-theme="angel"] .learn-layout{background:#f2faff;color:#174660;border-color:#b9ddeb}
+:root[data-theme="angel"] .learn-sidebar,
+:root[data-theme="angel"] .learn-top{background:#fffdf0}
+:root[data-theme="angel"] .learn-home-v2,
+:root[data-theme="angel"] .learn-language-chooser,
+:root[data-theme="angel"] .language-intro-page{background:radial-gradient(ellipse at 50% 0,#c5edff,#eff9ff 59%,#fffdf0 100%);color:#174660}
+:root[data-theme="angel"] .learn-home-v2 .learn-orbit{border-color:#7cbfe744;box-shadow:0 0 90px #67c3e72b}
+:root[data-theme="angel"] .learn-home-v2 .rain-bit{color:#228cc5;text-shadow:0 0 12px #2baeea44}
+:root[data-theme="angel"] .learn-choice-card,
+:root[data-theme="angel"] .learn-language-card,
+:root[data-theme="angel"] .language-intro-card,
+:root[data-theme="angel"] .language-intro-heading,
+:root[data-theme="angel"] .content-card,
+:root[data-theme="angel"] .lesson-heading,
+:root[data-theme="angel"] .progress-card,
+:root[data-theme="angel"] .tip-box,
+:root[data-theme="angel"] .completion-tag,
+:root[data-theme="angel"] .summary-card,
+:root[data-theme="angel"] .solution-card,
+:root[data-theme="angel"] .language-intro-footer,
+:root[data-theme="angel"] .lesson-objective,
+:root[data-theme="angel"] .feedback,
+:root[data-theme="angel"] .toast,
+:root[data-theme="angel"] .version-badge,
+:root[data-theme="angel"] .learn-back-link{
+  background:#fffdf0;color:#174660;border-color:#b5dcec;box-shadow:0 9px 30px #4b9dc11c
+}
+:root[data-theme="angel"] .learn-language-card:hover,
+:root[data-theme="angel"] .learn-choice-card:hover,
+:root[data-theme="angel"] .lesson-link:hover{background:#dcf4ff;color:#164d6f;border-color:#69bde8;box-shadow:0 12px 25px #6cbddd38}
+:root[data-theme="angel"] .learn-choice-description,
+:root[data-theme="angel"] .learn-hero-title p:last-child,
+:root[data-theme="angel"] .language-chooser-top p,
+:root[data-theme="angel"] .language-card-description,
+:root[data-theme="angel"] .language-intro-heading p,
+:root[data-theme="angel"] .language-intro-card p,
+:root[data-theme="angel"] .language-intro-card li,
+:root[data-theme="angel"] .content-card p,
+:root[data-theme="angel"] .lesson-lede,
+:root[data-theme="angel"] .lesson-objective,
+:root[data-theme="angel"] .tip-box li,
+:root[data-theme="angel"] .education-glossary dd,
+:root[data-theme="angel"] .route-heading p,
+:root[data-theme="angel"] .progress-card p{color:#547a92}
+:root[data-theme="angel"] .language-chooser-top h1,
+:root[data-theme="angel"] .lesson-heading h1,
+:root[data-theme="angel"] .learn-hero-title h1,
+:root[data-theme="angel"] .learn-choice-card strong,
+:root[data-theme="angel"] .language-intro-card h2,
+:root[data-theme="angel"] .route-heading h2,
+:root[data-theme="angel"] .challenge-question,
+:root[data-theme="angel"] .content-card h2{color:#174660!important}
+:root[data-theme="angel"] .learn-brand small,
+:root[data-theme="angel"] .small-tag,
+:root[data-theme="angel"] .section-label,
+:root[data-theme="angel"] .eyebrow,
+:root[data-theme="angel"] .lesson-link.active,
+:root[data-theme="angel"] .learn-choice-meta{color:#197fb0}
+:root[data-theme="angel"] .button-primary,
+:root[data-theme="angel"] .lesson-link.active .nav-number{background:#238fc6;color:#fffdf0;border-color:#1675a4}
+:root[data-theme="angel"] .button-secondary,
+:root[data-theme="angel"] .small-button,
+:root[data-theme="angel"] .subtle-button,
+:root[data-theme="angel"] .lesson-link,
+:root[data-theme="angel"] .choice-button{background:#e7f5ff;color:#245d7c;border-color:#b1dae9}
+:root[data-theme="angel"] .lesson-link.active,
+:root[data-theme="angel"] .choice-button.is-selected{background:#d2eeff;color:#175b80;border-color:#59b5e2}
+:root[data-theme="angel"] .language-card-icon{background:#eaf8ff}
+:root[data-theme="angel"] .code-example,
+:root[data-theme="angel"] #student-code{background:#eaf7ff;color:#174b6a;border-color:#b7d9ed}
+:root[data-theme="angel"] .challenge-question{color:#174660!important}
+:root[data-theme="angel"] .feedback-success{background:#e8fff1;color:#145d38!important;border-color:#a1d8b6}
+:root[data-theme="angel"] .feedback-error{background:#fff0f2;color:#983e50!important;border-color:#e7b6c3}
+:root[data-theme="angel"] .learn-splash{background:#eff9ff;color:#174660}
+:root[data-theme="angel"] .learn-splash h1{color:#174660}
+:root[data-theme="angel"] .language-practice-note{color:#56768e}
+
+/* Emblemas y botones de Learn en azul Angelical Water; SVG corporativo intacto. */
+:root[data-theme="angel"] .learn-choice-icon,
+:root[data-theme="angel"] .learn-choice-meta,
+:root[data-theme="angel"] .learn-choice-arrow,
+:root[data-theme="angel"] .learn-hero-title h1 span,
+:root[data-theme="angel"] .learn-brand strong span,
+:root[data-theme="angel"] .learn-hero-title .small-tag{color:#248dbf}
+:root[data-theme="angel"] .learn-choice-card:hover .learn-choice-arrow{color:#125f89}
+
+
+/* Etapa H — ambientación temática de Learn Without Mercy (sin modificar contenidos). */
+:root[data-theme="demon"]{--h-bg:#0b080a;--h-panel:#161012;--h-editor:#0d090b;--h-raised:#261419;--h-active:#35151f;--h-border:#50232f;--h-accent:#ec1240;--h-hover:#ff4167;--h-text:#f9f2f4;--h-muted:#bba0a9;--h-soft-text:#ffb0c2;--h-glow:#ea17433b;--h-halo:#dc13331b;--red:#ec1240;--hover:#ff4167;--text:#f9f2f4;--muted:#bba0a9;--border:#50232f}
+:root[data-theme="purple"]{--h-bg:#0e0a17;--h-panel:#171124;--h-editor:#0f0b19;--h-raised:#281b3f;--h-active:#36214e;--h-border:#593c79;--h-accent:#a67aff;--h-hover:#c4a0ff;--h-text:#f6f0ff;--h-muted:#bcaed3;--h-soft-text:#d8b8ff;--h-glow:#a67aff3d;--h-halo:#7d4cf128;--red:#a67aff;--hover:#c4a0ff;--text:#f6f0ff;--muted:#bcaed3;--border:#593c79}
+:root[data-theme="green"]{--h-bg:#07120d;--h-panel:#0e1d15;--h-editor:#08150e;--h-raised:#173323;--h-active:#1d472e;--h-border:#315e42;--h-accent:#39d881;--h-hover:#6ef5aa;--h-text:#edfff4;--h-muted:#a9c5b5;--h-soft-text:#a5f7c8;--h-glow:#38e08032;--h-halo:#20ae5a25;--red:#39d881;--hover:#6ef5aa;--text:#edfff4;--muted:#a9c5b5;--border:#315e42}
+:root[data-theme="slayer"]{--h-bg:#170d09;--h-panel:#251610;--h-editor:#130b08;--h-raised:#382015;--h-active:#492512;--h-border:#815033;--h-accent:#fa7930;--h-hover:#ffad64;--h-text:#fff4e8;--h-muted:#d0b49e;--h-soft-text:#ffc69b;--h-glow:#f57c3240;--h-halo:#e65e2127;--red:#fa7930;--hover:#ffad64;--text:#fff4e8;--muted:#d0b49e;--border:#815033}
+:root:not([data-theme="angel"]){background:var(--h-bg);color:var(--h-text)}
+:root:not([data-theme="angel"]) .learn-app{background:var(--h-bg);color:var(--h-text)}
+:root:not([data-theme="angel"]) .learn-top,
+:root:not([data-theme="angel"]) .learn-sidebar,
+:root:not([data-theme="angel"]) .learn-nav,
+:root:not([data-theme="angel"]) .progress-card{
+ background:var(--h-panel);border-color:var(--h-border);color:var(--h-text)
+}
+:root:not([data-theme="angel"]) .learn-main,
+:root:not([data-theme="angel"]) .learn-layout{
+ background:radial-gradient(circle at 70% 7%,var(--h-halo),transparent 47%),var(--h-bg);color:var(--h-text)
+}
+:root:not([data-theme="angel"]) .learn-home{
+ background:radial-gradient(circle at 46% 14%,var(--h-halo),transparent 58%),var(--h-bg)
+}
+:root:not([data-theme="angel"]) .learn-home-card{
+ background:linear-gradient(135deg,var(--h-raised),var(--h-panel) 74%);
+ color:var(--h-text);border-color:var(--h-border);box-shadow:0 18px 42px #0008,0 0 40px var(--h-halo)
+}
+:root:not([data-theme="angel"]) .learn-home-card h1 span,
+:root:not([data-theme="angel"]) .learn-brand strong span,
+:root:not([data-theme="angel"]) .learn-choice-meta,
+:root:not([data-theme="angel"]) .learn-choice-icon,
+:root:not([data-theme="angel"]) .learn-choice-arrow,
+:root:not([data-theme="angel"]) .small-tag,
+:root:not([data-theme="angel"]) .section-label,
+:root:not([data-theme="angel"]) .eyebrow,
+:root:not([data-theme="angel"]) .language-card-icon,
+:root:not([data-theme="angel"]) .learn-intro-strip{color:var(--h-accent)}
+:root:not([data-theme="angel"]) .learn-choice-card,
+:root:not([data-theme="angel"]) .learn-language-card,
+:root:not([data-theme="angel"]) .language-intro-card,
+:root:not([data-theme="angel"]) .content-card,
+:root:not([data-theme="angel"]) .tip-box,
+:root:not([data-theme="angel"]) .lesson-heading,
+:root:not([data-theme="angel"]) .lesson-article,
+:root:not([data-theme="angel"]) .language-chooser-top,
+:root:not([data-theme="angel"]) .code-example,
+:root:not([data-theme="angel"]) .code-title,
+:root:not([data-theme="angel"]) .progress-track{
+ background:var(--h-panel);color:var(--h-text);border-color:var(--h-border)
+}
+:root:not([data-theme="angel"]) .learn-choice-card:hover,
+:root:not([data-theme="angel"]) .learn-language-card:hover,
+:root:not([data-theme="angel"]) .lesson-link:hover,
+:root:not([data-theme="angel"]) .choice-button:hover{
+ background:var(--h-raised);border-color:var(--h-hover);box-shadow:0 0 20px var(--h-glow)
+}
+:root:not([data-theme="angel"]) .learn-choice-card strong,
+:root:not([data-theme="angel"]) .route-heading h2,
+:root:not([data-theme="angel"]) .language-chooser-top h1,
+:root:not([data-theme="angel"]) .lesson-heading h1,
+:root:not([data-theme="angel"]) .content-card h2{color:var(--h-text)}
+:root:not([data-theme="angel"]) .home-subtitle,
+:root:not([data-theme="angel"]) .route-heading p,
+:root:not([data-theme="angel"]) .lesson-lede,
+:root:not([data-theme="angel"]) .content-card p,
+:root:not([data-theme="angel"]) .language-card-description,
+:root:not([data-theme="angel"]) .language-intro-card p{color:var(--h-muted)}
+:root:not([data-theme="angel"]) .home-button-ghost,
+:root:not([data-theme="angel"]) .button-secondary,
+:root:not([data-theme="angel"]) .small-button,
+:root:not([data-theme="angel"]) .lesson-link,
+:root:not([data-theme="angel"]) .choice-button{
+ color:var(--h-soft-text);background:var(--h-raised);border-color:var(--h-border)
+}
+:root:not([data-theme="angel"]) .button-primary,
+:root:not([data-theme="angel"]) .home-button-main,
+:root:not([data-theme="angel"]) .progress-track span{
+ background:var(--h-accent);border-color:var(--h-accent);color:#121016;box-shadow:0 0 14px var(--h-glow)
+}
+:root:is([data-theme="demon"],[data-theme="purple"],[data-theme="slayer"]) .button-primary,
+:root:is([data-theme="demon"],[data-theme="purple"],[data-theme="slayer"]) .home-button-main{color:#fff}
+:root:not([data-theme="angel"]) .button-primary:hover,
+:root:not([data-theme="angel"]) .home-button-main:hover{
+ background:var(--h-hover);border-color:var(--h-hover);box-shadow:0 0 22px var(--h-glow)
+}
+:root:not([data-theme="angel"]) .version-badge{
+ background:var(--h-raised);color:var(--h-soft-text);border-color:var(--h-border)
+}
+:root:not([data-theme="angel"]) .lesson-link.active,
+:root:not([data-theme="angel"]) .choice-button.is-selected{
+ color:var(--h-text);background:var(--h-active);border-color:var(--h-accent)
+}
+:root:not([data-theme="angel"]) .code-example,
+:root:not([data-theme="angel"]) #student-code{
+ background:var(--h-editor);color:var(--h-text);border-color:var(--h-border)
+}
+:root:not([data-theme="angel"]) .learn-splash{background:var(--h-bg);color:var(--h-text)}
+:root:not([data-theme="angel"]) .learn-splash h1{color:var(--h-text)}
+:root:not([data-theme="angel"]) .splash-progress span{background:var(--h-accent);box-shadow:0 0 10px var(--h-glow)}
+:root:not([data-theme="angel"]) a:focus-visible,
+:root:not([data-theme="angel"]) button:focus-visible,
+:root:not([data-theme="angel"]) textarea:focus-visible{outline-color:var(--h-accent)}

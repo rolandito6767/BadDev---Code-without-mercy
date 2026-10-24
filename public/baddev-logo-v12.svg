@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="3840" height="2161" viewBox="0 0 1672 941" role="img" aria-label="Logotipo rojo de diablito sonriente con símbolos de código sobre fondo granate oscuro">
+<title>Logo diablito y código — vector escalable</title>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1"><stop stop-color="#2c111b"/><stop offset="1" stop-color="#180e13"/></linearGradient>
+  <radialGradient id="halo" cx="48%" cy="48%" r="64%"><stop stop-color="#52131f" stop-opacity=".62"/><stop offset=".65" stop-color="#35121c" stop-opacity=".27"/><stop offset="1" stop-color="#180e13" stop-opacity="0"/></radialGradient>
+  <linearGradient id="head" x1="0.03" y1="0" x2=".88" y2="1"><stop stop-color="#f70a42"/><stop offset=".54" stop-color="#ed0036"/><stop offset="1" stop-color="#fa003b"/></linearGradient>
+  <linearGradient id="code" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff1650"/><stop offset="1" stop-color="#ff0750"/></linearGradient>
+  <clipPath id="face-clip"><path d="M435,171 L433,182 L469,351 L456,382 L450,416 L449,518 L451,554 L454,573 L462,600 L483,639 L515,674 L546,696 L581,712 L625,723 L670,726 L717,721 L764,706 L802,684 L836,653 L853,630 L869,597 L876,572 L879,550 L879,410 L875,384 L869,365 L862,351 L862,346 L898,188 L898,172 L892,168 L881,171 L724,267 L689,262 L645,262 L608,267 L445,168 L440,168Z"/></clipPath>
+</defs>
+<rect x="0" y="0" width="1672" height="941" fill="url(#bg)"/>
+<rect x="0" y="0" width="1672" height="941" fill="url(#halo)"/>
+<!-- Solid red head with the eyes, eyebrows and smile as true vector cutouts. -->
+<path d="M435,171 L433,182 L469,351 L456,382 L450,416 L449,518 L451,554 L454,573 L462,600 L483,639 L515,674 L546,696 L581,712 L625,723 L670,726 L717,721 L764,706 L802,684 L836,653 L853,630 L869,597 L876,572 L879,550 L879,410 L875,384 L869,365 L862,351 L862,346 L898,188 L898,172 L892,168 L881,171 L724,267 L689,262 L645,262 L608,267 L445,168 L440,168Z M726,599 L723,606 L707,621 L691,630 L676,634 L655,634 L641,630 L627,623 L618,616 L608,606 L605,601 L606,597 L609,594 L615,594 L641,607 L653,610 L669,611 L683,609 L696,605 L719,593 L722,594Z M807,494 L806,501 L774,559 L768,565 L764,566 L757,563 L710,516 L710,511 L716,506 L792,486 L802,487Z M524,493 L531,486 L547,488 L616,506 L621,510 L622,515 L573,564 L567,566 L562,564 L556,557 L524,499Z M829,460 L827,464 L824,464 L816,460 L794,454 L765,454 L741,461 L729,467 L705,484 L695,483 L689,477 L687,470 L690,462 L694,458 L716,443 L738,434 L763,430 L784,432 L802,438 L814,445Z M502,461 L511,450 L529,438 L552,431 L570,430 L596,435 L622,447 L642,463 L644,473 L641,479 L636,483 L626,484 L602,467 L588,460 L566,454 L549,453 L532,455 L504,464Z" fill="url(#head)" fill-rule="evenodd"/>
+<!-- Inner facets of the horns, clipped to the silhouette. -->
+<g clip-path="url(#face-clip)" opacity=".55" fill="#ff2458">
+ <path d="M452 196L578 276L495 337L473 304Z"/>
+ <path d="M868 197L752 276L841 341L856 300Z"/>
+</g>
+<path d="M1204,376 L1197,379 L1188,390 L1186,402 L1191,414 L1295,484 L1292,488 L1191,555 L1186,567 L1189,582 L1193,587 L1201,592 L1216,593 L1354,504 L1361,495 L1363,481 L1359,471 L1353,465 L1219,377Z" fill="url(#code)"/>
+<path d="M1067,376 L1059,379 L930,464 L920,476 L919,490 L923,499 L929,505 L1059,592 L1074,595 L1083,592 L1093,581 L1095,568 L1090,556 L986,485 L1084,420 L1091,413 L1095,403 L1095,396 L1091,386 L1082,378Z" fill="url(#code)"/>
+</svg>
