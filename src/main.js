@@ -9,8 +9,9 @@ import { DEFAULT_SETTINGS, loadSettings, saveSettings } from './settings.js';
 import { createEditor } from './editor.js';
 import { chooseFiles, writeFile, fileLanguage, extensionOf, makeUniqueName, validFilename, STARTER_CODE } from './files.js';
 import { languageForFile, languageForType, supportedFileName, indentSizeForFile } from './languages.js';
-import { createStarterProject, readDirectory, validProjectPath, PROJECT_TYPES, MAX_FILE_BYTES, MAX_PROJECT_FILES, writeProjectFile } from './project.js';
+import { createStarterProject, readDirectory, resolveProjectReference, validProjectPath, PROJECT_TYPES, MAX_FILE_BYTES, MAX_PROJECT_FILES, writeProjectFile } from './project.js';
 import { buildPreview, selectPreviewEntry, openDetachedPreview, previewableFiles } from './preview.js';
+import { initTerminal } from './terminal.js';
 import { buildAssetMap, setAssets, clearAssets, getAssets, assetCount, isImageName } from './assets.js';
 import { makeZip, downloadBlob } from './zip.js';
 import { readSession, writeSession, removeSession, SESSION_VERSION } from './session.js';
@@ -872,21 +873,61 @@ function updatePreviewEntries(fallback = active()?.name || '') {
   if (entry) { refs.previewEntry.value = entry; previewPreferredEntry = entry; }
 }
 
+// ----- V 1.4: consola mejorada (tipos, filtros, hora, copiar) -----
+const CONSOLE_LABELS = { error: 'ERROR', warn: 'AVISO', log: 'LOG', info: 'INFO' };
+const consoleCounts = { error: 0, warn: 0, log: 0, info: 0 };
+let consoleFilter = 'all';
+function updateConsoleCounts() {
+  const total = consoleCounts.error + consoleCounts.warn + consoleCounts.log + consoleCounts.info;
+  const shown = { all: total, error: consoleCounts.error, warn: consoleCounts.warn, log: consoleCounts.log };
+  document.querySelectorAll('[data-console-count]').forEach(el => { el.textContent = String(shown[el.dataset.consoleCount] ?? 0); });
+  refs.previewErrorCount.textContent = String(consoleCounts.error);
+  refs.previewErrorCount.classList.toggle('has-errors', consoleCounts.error > 0);
+}
 function resetPreviewErrors() {
   previewErrorCount = 0;
-  refs.previewErrorCount.textContent = '0';
+  Object.keys(consoleCounts).forEach(key => { consoleCounts[key] = 0; });
   refs.previewErrors.replaceChildren();
+  updateConsoleCounts();
 }
-function previewLine(message, isError = true) {
-  if (isError) {
-    previewErrorCount++;
-    refs.previewErrorCount.textContent = String(previewErrorCount);
-  }
+function previewLine(message, isError = true, kind = '') {
+  const type = kind || (isError ? 'error' : 'info');
+  if (type === 'error') previewErrorCount++;
+  consoleCounts[type]++;
   const line = document.createElement('p');
-  line.className = isError ? '' : 'preview-notice';
-  line.textContent = message;
+  line.className = `console-line kind-${type}${type === 'info' ? ' preview-notice' : ''}${type === 'log' ? ' preview-log' : ''}${type === 'warn' ? ' preview-warn' : ''}`;
+  line.dataset.kind = type;
+  const time = document.createElement('span');
+  time.className = 'console-time';
+  time.textContent = new Date().toLocaleTimeString('es', { hour12: false });
+  const badge = document.createElement('span');
+  badge.className = 'console-badge';
+  badge.textContent = CONSOLE_LABELS[type];
+  const text = document.createElement('span');
+  text.className = 'console-text';
+  text.textContent = message;
+  line.append(time, badge, text);
   refs.previewErrors.append(line);
   refs.previewErrors.scrollTop = refs.previewErrors.scrollHeight;
+  updateConsoleCounts();
+}
+function setConsoleFilter(filter) {
+  consoleFilter = filter;
+  refs.previewErrors.dataset.filter = filter;
+  document.querySelectorAll('[data-console-filter]').forEach(button => {
+    const active = button.dataset.consoleFilter === filter;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+document.querySelectorAll('[data-console-filter]').forEach(button => button.addEventListener('click', () => setConsoleFilter(button.dataset.consoleFilter)));
+async function copyConsole() {
+  const lines = [...refs.previewErrors.querySelectorAll('.console-line')]
+    .filter(line => consoleFilter === 'all' || line.dataset.kind === consoleFilter)
+    .map(line => [...line.children].map(part => part.textContent).join(' '));
+  if (!lines.length) { toast('No hay mensajes para copiar.', 'error'); return; }
+  try { await navigator.clipboard.writeText(lines.join('\n')); toast(`${lines.length} mensaje(s) copiados.`); }
+  catch { toast('No se pudo copiar automáticamente. Selecciona el texto y usa Ctrl + C.', 'error'); }
 }
 // Etapa G — ambos motores Python. Nunca se ejecuta al abrir un archivo ni por Auto.
 let pythonOutputLength = 0;
@@ -901,9 +942,7 @@ const pythonRunner = createPythonRunner({
       refs.pythonOutput.textContent += chunk + '\n';
       refs.pythonOutput.scrollTop = refs.pythonOutput.scrollHeight;
     }
-    previewLine(`[Python ${stream}] ${value.slice(0, 450)}`, stream === 'stderr');
-    const line = refs.previewErrors.lastElementChild;
-    if (line && stream !== 'stderr') line.classList.add('preview-log');
+    previewLine(`[Python ${stream}] ${value.slice(0, 450)}`, stream === 'stderr', stream === 'stderr' ? 'error' : 'log');
   }
 });
 function setPythonPreview(selected) {
@@ -922,9 +961,7 @@ async function runSelectedPython(fileName = '') {
   const file = files.find(f => f.name === name);
   if (!file || !/\.py$/i.test(file.name)) { toast('Selecciona un archivo Python (.py) antes de ejecutarlo.', 'error'); return; }
   if (!setPythonPreview(file.name)) return;
-  refs.previewErrors.replaceChildren();
-  refs.previewErrorCount.textContent = '0';
-  previewErrorCount = 0;
+  resetPreviewErrors();
   pythonOutputLength = 0;
   refs.pythonOutput.textContent = '';
   // El código se obtiene del archivo activo, que se actualiza al escribir; no de una copia anterior.
@@ -1030,6 +1067,23 @@ async function formatActiveFile() {
   } catch (error) { toast(`No se pudo ordenar: ${error.message}`, 'error'); }
 }
 let previewRequest = 0;
+// Red de seguridad: si un script de la página usa location.href, el iframe carga la pantalla de BadDev.
+// Se detecta una carga que BadDev no pidió y se restaura la vista previa (una sola vez por intento).
+let previewLoadPending = false;
+let lastPreviewRecovery = 0;
+refs.previewFrame.addEventListener('load', () => {
+  if (previewLoadPending) { previewLoadPending = false; return; }
+  if (!previewVisible || !previewToken || !refs.previewFrame.hasAttribute('srcdoc')) return;
+  if (Date.now() - lastPreviewRecovery < 2500) {
+    previewToken = '';
+    refs.previewFrame.srcdoc = '<!doctype html><html><body style="font:14px system-ui;padding:25px;color:#777">Esta página intenta cambiar de dirección por sí sola. Pulsa Actualizar para volver a cargarla.</body></html>';
+    previewLoadPending = true;
+    return;
+  }
+  lastPreviewRecovery = Date.now();
+  previewLine('Aviso: un script cambió la dirección con location.href. Para ir a otra página usa un enlace <a href="archivo.html">; la vista previa se restauró.', false, 'warn');
+  refreshPreview();
+});
 async function refreshPreview() {
   if (!previewVisible) return;
   const currentRequest = ++previewRequest;
@@ -1045,11 +1099,13 @@ async function refreshPreview() {
     // Evita mostrar resultados de una solicitud antigua tras cambiar de archivo o cerrar el panel.
     if (!previewVisible || currentRequest !== previewRequest) return;
     previewToken = result.token;
+    previewLoadPending = true;
     refs.previewFrame.srcdoc = result.html;
-    if (result.warnings.length) result.warnings.forEach(w => previewLine(`Aviso: ${w}`, false));
+    if (result.warnings.length) result.warnings.forEach(w => previewLine(`Aviso: ${w}`, false, 'warn'));
     else previewLine('Vista previa actualizada. Los errores y mensajes aparecerán aquí.', false);
   } catch (error) {
     if (!previewVisible || currentRequest !== previewRequest) return;
+    previewLoadPending = true;
     refs.previewFrame.srcdoc = '<!doctype html><html><body style="font:14px system-ui;padding:25px;color:#777">No se pudo generar la vista previa. Revisa los diagnósticos de BadDev.</body></html>';
     previewLine(error.message, true);
   }
@@ -1075,15 +1131,27 @@ async function detachPreview() {
 refs.previewSize.addEventListener('change', () => { refs.previewPanel.dataset.device = refs.previewSize.value; });
 refs.previewAuto.addEventListener('change', () => { if (refs.previewAuto.checked && previewVisible) refreshPreview(); });
 refs.previewEntry.addEventListener('change', () => { pythonRunner.stop(false); previewPreferredEntry = refs.previewEntry.value; refreshPreview(); scheduleBackup(); });
+// Un enlace dentro de la página previsualizada abre el archivo enlazado del proyecto (nunca navega el iframe).
+function followPreviewLink(data) {
+  const href = String(data.href || '').slice(0, 240);
+  if (data.external) { previewLine(`Aviso: los enlaces externos no se abren en la vista previa (${href}).`, false, 'warn'); return; }
+  const target = resolveProjectReference(refs.previewEntry.value, href);
+  const match = target ? files.find(f => f.name.toLowerCase() === target.toLowerCase()) : null;
+  if (!match) { previewLine(`No se encontró el archivo enlazado: ${href}`, true); return; }
+  if (!previewableFiles(files).some(f => f.name === match.name)) { previewLine(`«${match.name}» no se puede mostrar en la vista previa.`, false, 'warn'); return; }
+  pythonRunner.stop(false);
+  refs.previewEntry.value = match.name;
+  previewPreferredEntry = match.name;
+  refreshPreview();
+  scheduleBackup();
+}
 window.addEventListener('message', (event) => {
   if (!previewVisible || event.source !== refs.previewFrame.contentWindow) return;
   const data = event.data;
+  if (data && typeof data === 'object' && data.baddevPreview === previewToken && data.type === 'navigate') { followPreviewLink(data); return; }
   if (!data || typeof data !== 'object' || data.baddevPreview !== previewToken || !['error','log','warn'].includes(data.type)) return;
   if (refs.previewErrors.childElementCount >= 120) return;
-  previewLine(String(data.message).slice(0, 800), data.type === 'error');
-  const line = refs.previewErrors.lastElementChild;
-  if (line && data.type === 'log') line.classList.add('preview-log');
-  if (line && data.type === 'warn') line.classList.add('preview-warn');
+  previewLine(String(data.message).slice(0, 800), data.type === 'error', data.type === 'log' ? 'log' : data.type === 'warn' ? 'warn' : 'error');
 });
 
 
@@ -1114,6 +1182,38 @@ function finishSplash() {
 refs.skipSplash.addEventListener('click', finishSplash);
 splashTimeout = setTimeout(finishSplash, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1200 : 4200);
 
+// ----- V 1.4: terminal integrada -----
+const terminal = initTerminal({
+  files: () => files,
+  assets: () => [...getAssets().values()].map(a => ({ name: a.name, size: a.bytes.length })),
+  projectName: () => project?.name || 'Archivos sueltos',
+  version: () => displayVersion(packageInfo.version),
+  getTheme: () => settings.theme,
+  setTheme: (theme) => setEditorSettings({ ...settings, theme }),
+  openFile: (name) => { const file = files.find(f => f.name.toLowerCase() === name.toLowerCase()); if (!file) return false; activateFile(file.id); return true; },
+  createFile: (name) => {
+    if (!(project ? validProjectPath(name) : validFilename(name)) || !PROJECT_TYPES.has(extensionOf(name))) return { ok: false, error: 'Nombre no válido o extensión no compatible con BadDev.' };
+    if (files.length >= MAX_PROJECT_FILES) return { ok: false, error: 'Se alcanzó el límite de archivos del proyecto.' };
+    const unique = makeUniqueName(name, files.map(f => f.name));
+    insertFile({ name: unique, content: STARTER_CODE[extensionOf(unique)] ?? '', isNew: true });
+    return { ok: true, name: unique };
+  },
+  save: () => saveFile(),
+  exportZip: () => exportProjectZip(),
+  previewShow: (name) => {
+    if (name) {
+      const match = previewableFiles(files).find(f => f.name.toLowerCase() === name.toLowerCase());
+      if (!match) return false;
+      previewPreferredEntry = match.name;
+      refs.previewEntry.value = match.name;
+    } else if (!previewableFiles(files).length) return false;
+    if (!previewVisible) togglePreview(); else refreshPreview();
+    return true;
+  },
+  runPython: (name) => runSelectedPython(name),
+  afterHide: () => view?.focus?.()
+});
+
 const actions = {
   new: showNewDialog,
   'new-project': showProjectDialog,
@@ -1123,10 +1223,12 @@ const actions = {
   'save-project': saveProject,
   'export-zip': exportProjectZip,
   'toggle-preview': togglePreview,
+  'toggle-terminal': () => terminal.toggle(),
   'refresh-preview': refreshPreview,
   'run-python': () => runSelectedPython(active()?.name),
   'detach-preview': detachPreview,
   'clear-errors': resetPreviewErrors,
+  'copy-console': copyConsole,
   'clear-workspace': closeProject,
   'close-project': closeProject,
   'recover-backup': async () => {
@@ -1199,6 +1301,7 @@ document.addEventListener('keydown', (event) => {
   if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey) return;
   if (refs.infoDialog.open || refs.newDialog.open || refs.renameDialog.open || refs.settingsDialog.open || refs.projectDialog.open || refs.unsavedDialog.open || refs.diagnosticsDialog.open) return;
   if (event.key === '/' || event.code === 'Slash') { event.preventDefault(); actions.comment(); return; }
+  if (event.code === 'Backquote') { event.preventDefault(); actions['toggle-terminal'](); return; }
   const key = event.key.toLowerCase();
   const action = { n: 'new', o: 'open', s: 'save', w: 'close', f: 'find', h: 'replace' }[key];
   if (action) {

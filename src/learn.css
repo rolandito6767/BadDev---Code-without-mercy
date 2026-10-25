@@ -465,3 +465,9 @@ button:disabled{opacity:.53;cursor:not-allowed}
 :root:not([data-theme="angel"]) a:focus-visible,
 :root:not([data-theme="angel"]) button:focus-visible,
 :root:not([data-theme="angel"]) textarea:focus-visible{outline-color:var(--h-accent)}
+
+/* ===== BadDev V 1.4 — tarjeta extra «Aprender comandos» ===== */
+.learn-extra{margin:26px auto 0;max-width:1200px;width:100%;display:flex;flex-direction:column;gap:12px}
+.learn-extra-title{letter-spacing:2px}
+.learn-command-card{border-style:dashed}
+.learn-command-card .language-card-icon{font-family:Consolas,"Cascadia Mono",monospace;font-weight:800}

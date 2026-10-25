@@ -11,6 +11,7 @@ import { checkEducationCode } from './education-checks.js';
 import { renderLanguageChooser } from './learn-language-ui.js';
 import { renderLanguageIntroduction } from './learn-language-intro.js';
 import { checkChoice, checkCode } from './learn-checks.js';
+import { COMMAND_LESSONS, commandLessonById } from './command-course.js';
 
 const $ = (id) => document.getElementById(id);
 const STORE = 'baddev-learn-progress-v2';
@@ -19,7 +20,7 @@ let selectedChoice = null;
 let toastTimer;
 let completed = new Set();
 let courseLessons = LESSONS;
-const ALL_LESSON_IDS = new Set(Object.values(COURSE_LESSONS).flat().map(lesson => lesson.id));
+const ALL_LESSON_IDS = new Set([...Object.values(COURSE_LESSONS).flat(), ...COMMAND_LESSONS].map(lesson => lesson.id));
 let selectedLanguage = null;
 
 function loadProgress() {
@@ -261,17 +262,17 @@ const firstHash = decodeURIComponent(location.hash.slice(1));
 const explicitLanguage = new URLSearchParams(window.location.search).get('lang');
 // Un regreso antiguo de Sandbox (lessons.html#dom) sigue abriendo la lección correcta.
 selectedLanguage = explicitLanguage && languageInfo(explicitLanguage)
-  ? explicitLanguage : (!explicitLanguage && firstHash ? (findCourseLessonById(firstHash)?.languageId || languageForLessonId(firstHash)) : null);
+  ? explicitLanguage : (!explicitLanguage && firstHash ? (commandLessonById(firstHash)?.languageId || findCourseLessonById(firstHash)?.languageId || languageForLessonId(firstHash)) : null);
 if (selectedLanguage) {
   $('language-chooser').hidden = true;
   $('language-back').hidden = false;
   const lang = languageInfo(selectedLanguage);
-  courseLessons = COURSE_LESSONS[selectedLanguage];
+  courseLessons = selectedLanguage === 'cmd' ? [...COMMAND_LESSONS] : COURSE_LESSONS[selectedLanguage];
   const initial = courseLessons.findIndex(item => item.id === firstHash);
   currentIndex = initial >= 0 ? initial : 0;
   $('course-layout').hidden = false;
   const heading = document.querySelector('.route-heading h2');
-  if (heading) heading.textContent = `${lang.name} desde cero`;
+  if (heading) heading.textContent = selectedLanguage === 'cmd' ? 'Aprender comandos' : `${lang.name} desde cero`;
   const reset = $('reset-progress');
   if (reset) reset.textContent = `Reiniciar progreso de ${lang.name}`;
   renderProgress();

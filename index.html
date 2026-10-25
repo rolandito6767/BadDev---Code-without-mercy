@@ -94,6 +94,7 @@
                 <button data-action="format">Ordenar código</button>
                 <button data-action="check-syntax">Comprobar sintaxis</button>
                 <button data-action="toggle-preview" id="preview-menu-item">Mostrar vista previa</button>
+                <button data-action="toggle-terminal" id="terminal-menu-item">Terminal (Ctrl+`)</button>
                 <button data-action="settings">Configuración del editor</button>
               </div>
             </div>
@@ -108,10 +109,11 @@
           </nav>
         </div>
         <div class="topbar-actions">
-          <span class="phase-chip" id="version-chip">V 1.3 <span class="online-dot"></span></span>
+          <span class="phase-chip" id="version-chip">V 1.4 <span class="online-dot"></span></span>
           <button class="btn btn-quiet top-open" data-action="open-folder" title="Abrir carpeta de proyecto">Carpeta</button>
           <button class="btn btn-outline top-close-project" data-action="close-project" title="Cerrar proyecto guardado y volver al menú">Cerrar proyecto</button>
           <button class="btn btn-outline top-preview" data-action="toggle-preview" aria-pressed="false" title="Mostrar u ocultar la vista previa">▶ Vista previa</button>
+          <button class="btn btn-outline top-terminal" data-action="toggle-terminal" aria-pressed="false" title="Abrir o cerrar la terminal (Ctrl+`)"><span aria-hidden="true">&gt;_</span> Terminal</button>
           <button class="icon-button top-settings" data-action="settings" title="Configuración del editor" aria-label="Configuración del editor">⚙</button>
           <button class="btn btn-primary" data-action="save" title="Guardar el archivo actual (Ctrl+S)">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h13l3 3v13H4zM7 4v6h9V4M8 20v-7h8v7" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
@@ -167,6 +169,7 @@
             <button class="icon-button tabs-tool" data-action="format" title="Ordenar código" aria-label="Ordenar código">{ }</button>
             <button class="icon-button tabs-tool" data-action="replace" title="Buscar y reemplazar (Ctrl+H)" aria-label="Buscar y reemplazar">⇄</button>
             <button class="icon-button tabs-tool" data-action="toggle-preview" title="Vista previa del proyecto" aria-label="Vista previa">◧</button>
+            <button class="icon-button tabs-tool" data-action="toggle-terminal" title="Terminal (Ctrl+`)" aria-label="Terminal">&gt;_</button>
             <span class="workspace-label">BADDEV / WORKSPACE</span>
           </div>
 
@@ -188,7 +191,7 @@
                 <p class="welcome-workflow">Para continuar otro día, guarda tu proyecto en una carpeta o descarga el ZIP. Al volver a BadDev, usa <strong>Abrir proyecto</strong>.</p>
                 <div class="welcome-hint"><span class="keycap">Ctrl</span><span class="plus-sign">+</span><span class="keycap">N</span> para comenzar desde cero</div>
               </div>
-              <div class="welcome-decor" aria-hidden="true"><span>V 1.3</span><span>12 LENGUAJES / LEARN</span></div>
+              <div class="welcome-decor" aria-hidden="true"><span>V 1.4</span><span>12 LENGUAJES / LEARN</span></div>
             </div>
             <div id="editor-host" class="editor-host" hidden aria-label="Editor de código"></div>
             <aside id="preview-panel" class="preview-panel" hidden aria-label="Vista previa aislada">
@@ -215,15 +218,41 @@
                 <p class="python-security">Python local se habilita únicamente cuando inicias <code>npm run python:bridge</code>. Ejecuta solo código que comprendas o provenga de fuentes confiables.</p>
               </section>
               <iframe id="preview-frame" title="Visualizar archivos compatibles en entorno aislado" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
-              <div class="preview-console"><div class="preview-console-title">CONSOLA / DIAGNÓSTICOS / AVISOS <span id="preview-error-count">0</span> <button id="clear-errors" type="button" data-action="clear-errors">Limpiar</button></div>
-                <div id="preview-errors" class="preview-errors" role="log" aria-live="polite"><p>Sin errores detectados.</p></div>
+              <div class="preview-console"><div class="preview-console-title"><span class="console-title-text">CONSOLA / DIAGNÓSTICOS / AVISOS</span> <span id="preview-error-count" title="Errores">0</span>
+                  <span class="console-filters" role="group" aria-label="Filtrar mensajes de la consola">
+                    <button type="button" class="console-filter is-active" data-console-filter="all" aria-pressed="true">Todo <span data-console-count="all">0</span></button>
+                    <button type="button" class="console-filter" data-console-filter="error" aria-pressed="false">Errores <span data-console-count="error">0</span></button>
+                    <button type="button" class="console-filter" data-console-filter="warn" aria-pressed="false">Avisos <span data-console-count="warn">0</span></button>
+                    <button type="button" class="console-filter" data-console-filter="log" aria-pressed="false">Logs <span data-console-count="log">0</span></button>
+                  </span>
+                  <button id="copy-console" type="button" data-action="copy-console" title="Copiar los mensajes visibles">Copiar</button>
+                  <button id="clear-errors" type="button" data-action="clear-errors">Limpiar</button></div>
+                <div id="preview-errors" class="preview-errors" role="log" aria-live="polite" data-filter="all"></div>
               </div>
             </aside>
           </section>
 
+          <section id="terminal-panel" class="terminal-panel" hidden aria-label="Terminal de BadDev">
+            <div id="terminal-resizer" class="terminal-resizer" role="separator" aria-orientation="horizontal" title="Arrastra para cambiar el tamaño"></div>
+            <div class="terminal-head">
+              <div class="terminal-tabs" role="tablist" aria-label="Tipo de terminal">
+                <button type="button" class="terminal-tab is-active" role="tab" aria-selected="true" data-term-tab="baddev" title="Comandos propios de BadDev (web y .exe)">BADDEV</button>
+                <button type="button" class="terminal-tab" role="tab" aria-selected="false" data-term-tab="cmd" title="Terminal real de Windows (solo en el .exe)">CMD REAL</button>
+              </div>
+              <span id="terminal-cwd" class="terminal-cwd"></span>
+              <div class="terminal-tools">
+                <button type="button" id="terminal-folder" class="icon-button" title="Elegir carpeta de trabajo de Windows" aria-label="Elegir carpeta de trabajo" hidden>▣</button>
+                <button type="button" id="terminal-clear" class="icon-button" title="Limpiar (Ctrl+L)" aria-label="Limpiar terminal">⌫</button>
+                <button type="button" id="terminal-close" class="icon-button" title="Cerrar terminal" aria-label="Cerrar terminal">×</button>
+              </div>
+            </div>
+            <div id="terminal-body" class="terminal-body"></div>
+            <div class="terminal-input-row"><span id="terminal-prompt" class="terminal-prompt"></span><input id="terminal-input" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Línea de comandos" /></div>
+          </section>
+
           <footer class="statusbar" aria-label="Estado del editor">
             <div class="status-left"><span class="status-brand-dot"></span><span id="status-save" aria-live="polite">Listo para crear</span><span class="status-separator"></span><span id="status-file">Sin archivo</span></div>
-            <div class="status-right"><span id="backup-status" class="backup-status" title="Respaldo de emergencia. No equivale a guardar en Windows y no se restaura automáticamente." aria-live="polite">Guarda o exporta tu proyecto</span><span class="status-separator"></span><span id="status-pos">Ln —, Col —</span><span class="status-separator"></span><span id="status-lang">—</span><span class="status-separator"></span><span id="status-indent">Espacios: 2</span><span class="status-separator"></span><span class="status-version" id="status-version">BadDev V 1.3</span></div>
+            <div class="status-right"><span id="backup-status" class="backup-status" title="Respaldo de emergencia. No equivale a guardar en Windows y no se restaura automáticamente." aria-live="polite">Guarda o exporta tu proyecto</span><span class="status-separator"></span><span id="status-pos">Ln —, Col —</span><span class="status-separator"></span><span id="status-lang">—</span><span class="status-separator"></span><span id="status-indent">Espacios: 2</span><span class="status-separator"></span><span class="status-version" id="status-version">BadDev V 1.4</span></div>
           </footer>
         </main>
       </div>

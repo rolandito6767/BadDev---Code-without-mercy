@@ -1,3 +1,4 @@
+import { COMMAND_TRACK } from './command-course.js';
 /** Catálogo compartido: navegación de Etapa D, sin ejecutar código del alumno. */
 export const CATALOG = Object.freeze([
   { id:'html', name:'HTML', tag:'HTML', ext:'.html', color:'#fb875c', summary:'Estructura de páginas y contenido.', type:'web', icon:'<>', code:'<main>\n  <h1>Hola, BadDev</h1>\n  <p>Mi primera página.</p>\n</main>', concepts:['Etiquetas y atributos','Estructura del documento','Formularios y enlaces'], note:'HTML describe el contenido; CSS lo presenta y JavaScript le da comportamiento.' },
@@ -15,7 +16,7 @@ export const CATALOG = Object.freeze([
 ]);
 
 const BY_ID = new Map(CATALOG.map(item => [item.id, item]));
-export function languageInfo(id) { return BY_ID.get(id) || null; }
+export function languageInfo(id) { return BY_ID.get(id) || (id === COMMAND_TRACK.id ? COMMAND_TRACK : null); }
 export function validLanguageId(id) { return BY_ID.has(id); }
 export const BASE_LESSON_IDS = Object.freeze({
   html:['inicio','archivos','atajos','algoritmos','html','depuracion'],

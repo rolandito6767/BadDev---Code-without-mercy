@@ -1,19 +1,11 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
-import electron from 'vite-plugin-electron';
-import renderer from 'vite-plugin-electron-renderer';
 
-// Configuración unificada para BadDev: Multi-página + Soporte de Electron Desktop
+// BadDev: web multipágina. El mismo resultado (carpeta dist) lo usan Netlify, GitHub Pages y Electron.
 export default defineConfig({
   base: './',
-  plugins: [
-    electron({
-      entry: 'main.js', // Aquí arranca tu archivo de Electron
-    }),
-    renderer(),
-  ],
   build: {
-    outDir: 'dist', 
+    outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
       input: {

@@ -12,3 +12,9 @@
 - [ ] El menú, el manual y la barra de estado indican V 1.3.
 
 Diagnóstico en CMD: `npm install`, `npm run dev`, `node --test tests/*.test.js`, `npm run build`.
+
+## Enlaces entre páginas (corrección)
+- [ ] En un proyecto con varias páginas, un botón `<a href="menu.html">` abre ese archivo en la vista previa y el selector cambia a él.
+- [ ] Un `<a href="#seccion">` se desplaza dentro de la misma página.
+- [ ] Un enlace a https://… no abre nada y deja un aviso en la consola.
+- [ ] Un enlace a un archivo que no existe muestra «No se encontró el archivo enlazado».

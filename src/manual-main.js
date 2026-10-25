@@ -7,6 +7,7 @@ import { displayVersion } from './version.js';
 import { MANUAL_SECTIONS } from './manual-data.js';
 import { languageInfo } from './learn-catalog.js';
 import { COURSE_MANUALS } from './education-data.js';
+import { COMMAND_MANUAL } from './command-course.js';
 import { renderLanguageChooser } from './learn-language-ui.js';
 import { renderLanguageIntroduction } from './learn-language-intro.js';
 
@@ -93,10 +94,10 @@ if (languageInfo(selectedLanguage)) {
   $('language-chooser').hidden = true;
   $('language-back').hidden = false;
   const lang = languageInfo(selectedLanguage);
-  sections = COURSE_MANUALS[selectedLanguage];
+  sections = selectedLanguage === 'cmd' ? [...COMMAND_MANUAL] : COURSE_MANUALS[selectedLanguage];
   $('course-layout').hidden = false;
   const heading = document.querySelector('.route-heading h2');
-  if (heading) heading.textContent = `Manual de ${lang.name}`;
+  if (heading) heading.textContent = selectedLanguage === 'cmd' ? 'Manual de comandos' : `Manual de ${lang.name}`;
   const sectionHash = decodeURIComponent(location.hash.slice(1));
   currentIndex = Math.max(0, sections.findIndex(item => item.id === sectionHash));
   makeNavigation();

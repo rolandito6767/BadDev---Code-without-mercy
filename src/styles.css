@@ -870,3 +870,74 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 }
 :root:not([data-theme="angel"]) input[type="range"],
 :root:not([data-theme="angel"]) input[type="checkbox"]{accent-color:var(--h-accent)}
+
+/* ===== BadDev V 1.4 — Terminal ===== */
+.terminal-panel{--terminal-h:260px;position:relative;flex:0 0 var(--terminal-h);height:var(--terminal-h);min-height:120px;display:flex;flex-direction:column;background:var(--editor,#0b0b0b);border-top:1px solid var(--border,#3a1822);color:var(--text,#f1f1f1);font:13px/1.55 Consolas,"Cascadia Mono","Courier New",monospace}
+.terminal-panel[hidden]{display:none}
+.terminal-resizer{position:absolute;left:0;right:0;top:-3px;height:7px;cursor:ns-resize;z-index:3}
+.terminal-resizer:hover{background:var(--red,#ff1744);opacity:.35}
+.terminal-head{display:flex;align-items:center;gap:12px;padding:0 10px;min-height:34px;background:var(--panel,#121214);border-bottom:1px solid var(--border,#2a2a31)}
+.terminal-tabs{display:flex;gap:2px}
+.terminal-tab{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted,#a4a4ab);font:700 10px/1 system-ui,sans-serif;letter-spacing:1.6px;padding:11px 12px;cursor:pointer}
+.terminal-tab:hover{color:var(--text,#fff)}
+.terminal-tab.is-active{color:var(--text,#fff);border-bottom-color:var(--red,#ff1744)}
+.terminal-cwd{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted,#a4a4ab);font-size:11px}
+.terminal-tools{display:flex;gap:2px}
+.terminal-body{flex:1;min-height:0;position:relative}
+.terminal-output{position:absolute;inset:0;overflow:auto;padding:8px 14px;user-select:text}
+.terminal-output[hidden]{display:none}
+.terminal-line{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.55em}
+.terminal-line.kind-cmdline{color:var(--muted,#a4a4ab)}
+.terminal-line.kind-err{color:#ff6b81}
+.terminal-line.kind-ok{color:#4ade80}
+.terminal-line.kind-warn{color:#fbbf24}
+.terminal-line.kind-info{color:#7dd3fc}
+.terminal-line.kind-dim{color:var(--muted,#8b8b93)}
+.terminal-line.kind-head{color:var(--hover,#ff5d7f);font-weight:700;letter-spacing:.5px;margin-top:4px}
+.terminal-line.kind-dir{color:var(--hover,#ff8da1)}
+.terminal-line.kind-img{color:#c4b5fd}
+.terminal-input-row{display:flex;align-items:center;gap:8px;padding:6px 14px 8px;border-top:1px solid var(--border,#2a2a31);background:var(--panel,#101012)}
+.terminal-prompt{color:var(--red,#ff1744);white-space:nowrap;font-weight:700;max-width:45%;overflow:hidden;text-overflow:ellipsis}
+#terminal-input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text,#f5f5f5);font:inherit;caret-color:var(--red,#ff1744)}
+#terminal-input::placeholder{color:var(--muted,#6f6f78);opacity:.8}
+:root[data-theme="angel"] .terminal-panel{background:#f7fcff;color:#12354a}
+:root[data-theme="angel"] .terminal-head,:root[data-theme="angel"] .terminal-input-row{background:#eaf7fd}
+:root[data-theme="angel"] #terminal-input{color:#12354a}
+:root[data-theme="angel"] .terminal-line.kind-err{color:#c0183a}:root[data-theme="angel"] .terminal-line.kind-ok{color:#0f8a4b}:root[data-theme="angel"] .terminal-line.kind-warn{color:#a16207}:root[data-theme="angel"] .terminal-line.kind-info{color:#0369a1}:root[data-theme="angel"] .terminal-line.kind-img{color:#6d28d9}
+@media(max-width:760px){.terminal-panel{--terminal-h:210px}.terminal-cwd{display:none}}
+
+/* ===== BadDev V 1.4 Fase 2 — botón Terminal y consola mejorada ===== */
+.top-terminal{font-family:Consolas,"Cascadia Mono",monospace;font-weight:700;letter-spacing:.3px;border-color:var(--red,#ff1744);color:var(--text,#fff);box-shadow:0 0 0 1px color-mix(in srgb,var(--red,#ff1744) 30%,transparent),0 0 14px color-mix(in srgb,var(--red,#ff1744) 22%,transparent)}
+.top-terminal span{color:var(--red,#ff1744);margin-right:2px}
+.top-terminal:hover{background:color-mix(in srgb,var(--red,#ff1744) 18%,transparent)}
+.top-terminal[aria-pressed="true"]{background:var(--red,#ff1744);color:#fff}
+.top-terminal[aria-pressed="true"] span{color:#fff}
+@media(max-width:900px){.top-terminal{font-size:10px;padding-inline:8px}}
+.preview-console-title{flex-wrap:wrap;row-gap:6px}
+.console-title-text{font-weight:700}
+#preview-error-count{min-width:20px;text-align:center;padding:1px 6px;border-radius:99px;background:#241a1d;color:#a99;font-size:10px}
+#preview-error-count.has-errors{background:#ff1744;color:#fff}
+.console-filters{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.console-filter{border:1px solid var(--border,#39252b);background:transparent;color:var(--muted,#b8a4ab);border-radius:99px;font-size:10px;padding:3px 9px;cursor:pointer}
+.console-filter span{opacity:.75;margin-left:2px}
+.console-filter:hover{color:var(--text,#fff)}
+.console-filter.is-active{background:var(--red,#ff1744);border-color:var(--red,#ff1744);color:#fff}
+#clear-errors{margin-left:0}
+#copy-console{border:1px solid #39252b;color:#c2a2ab;background:#1d1417;border-radius:4px;font-size:10px;padding:4px 8px;cursor:pointer}
+.preview-errors:empty::before{content:"Sin mensajes. Los errores, avisos y console.log aparecerán aquí.";color:var(--muted,#8b8b93);font-style:italic}
+.preview-errors .console-line{display:flex;gap:8px;align-items:baseline;margin:3px 0;padding:2px 6px;border-radius:6px;border-left:3px solid transparent}
+.console-time{color:var(--muted,#8b8b93);font-size:10px;flex:none}
+.console-badge{flex:none;min-width:44px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.6px;padding:1px 5px;border-radius:4px}
+.console-text{min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
+.console-line.kind-error{border-left-color:#ff1744;background:rgba(255,23,68,.08);color:#ff718d}.console-line.kind-error .console-badge{background:#ff1744;color:#fff}
+.console-line.kind-warn{border-left-color:#fbbf24;background:rgba(251,191,36,.07);color:#ffd38c}.console-line.kind-warn .console-badge{background:#fbbf24;color:#2b2000}
+.console-line.kind-log{border-left-color:#60a5fa;color:#a8d4ff}.console-line.kind-log .console-badge{background:#1e3a5f;color:#bfdbfe}
+.console-line.kind-info{border-left-color:#4b4b52;color:#b5a3a7}.console-line.kind-info .console-badge{background:#2a2a30;color:#c9c9d1}
+.preview-errors[data-filter="error"] .console-line:not(.kind-error),
+.preview-errors[data-filter="warn"] .console-line:not(.kind-warn),
+.preview-errors[data-filter="log"] .console-line:not(.kind-log){display:none}
+:root[data-theme="angel"] #copy-console{background:#e3f4ff;color:#1d6488;border-color:var(--angel-edge,#b7e5f8)}
+:root[data-theme="angel"] .console-line.kind-error{color:#b3173a}:root[data-theme="angel"] .console-line.kind-warn{color:#8a5a00}:root[data-theme="angel"] .console-line.kind-log{color:#19608d}:root[data-theme="angel"] .console-line.kind-info{color:#3d6b85}
+:root[data-theme="angel"] #preview-error-count{background:#d8eefb;color:#2c607d}
+:root:not([data-theme="angel"]) #copy-console{background:var(--h-raised,#1d1417);color:var(--h-soft-text,#c2a2ab);border-color:var(--h-border,#39252b)}
+.preview-console{height:170px}

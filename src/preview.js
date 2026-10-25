@@ -4,7 +4,7 @@ import { getAssets, createImageResolver, inlineCssImages, inlineHtmlImages } fro
 const MAX_PREVIEW_BYTES = 7_000_000;
 const MAX_IMAGE_PREVIEW_CHARS = 24_000_000; // imágenes incrustadas (base64), aparte del límite del código
 // Scripts are intentionally permitted *only* in the opaque-origin sandbox iframe.
-const CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src data: blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'";
+const CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob: https:; font-src data:; connect-src 'none'; media-src data: blob:; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'";
 const PREVIEW_EXTENSIONS = new Set(['html', 'htm', 'md', 'json', 'ts']);
 const escapeHtml = (value = '') => String(value)
   .replace(/&/g, '&amp;')
@@ -79,6 +79,49 @@ async function transpileTypeScript(source, filename, options = {}) {
   return { code: result.outputText, warnings };
 }
 
+
+// V 1.3.1 — Los enlaces de la página previsualizada NO deben navegar dentro del iframe (cargarían la propia
+// pantalla de BadDev). Se interceptan y BadDev abre el archivo enlazado del proyecto en la vista previa.
+function navigationGuard(session) {
+  return `(() => {
+    const token = ${JSON.stringify(session)};
+    const send = (payload) => { try { parent.postMessage({ baddevPreview: token, type: 'navigate', ...payload }, '*'); } catch (_) {} };
+    const isExternal = (href) => /^(?:[a-z][a-z\\d+.-]*:|\\/\\/)/i.test(href.trim());
+    document.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      const link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
+      if (!link) return;
+      const href = link.getAttribute('href') || '';
+      if (!href || /^javascript:/i.test(href)) return;
+      event.preventDefault();
+      if (href.startsWith('#')) {
+        // En un iframe srcdoc, un #ancla recargaría la página de BadDev: se desplaza a mano.
+        let id = href.slice(1);
+        try { id = decodeURIComponent(id); } catch (_) {}
+        const target = id ? (document.getElementById(id) || document.getElementsByName(id)[0]) : null;
+        if (target) target.scrollIntoView(); else if (!id || id === 'top') window.scrollTo(0, 0);
+        return;
+      }
+      send({ href, external: isExternal(href) });
+    });
+    // window.open('pagina.html') también se redirige al archivo del proyecto (sin abrir ventanas).
+    window.open = (url) => { const href = String(url || ''); if (href) send({ href, external: isExternal(href) }); return null; };
+    try {
+      if (window.navigation && typeof window.navigation.addEventListener === 'function') {
+        window.navigation.addEventListener('navigate', (event) => {
+          if (!event.cancelable || event.hashChange || event.downloadRequest || (event.destination && event.destination.sameDocument)) return;
+          const dest = new URL(event.destination.url);
+          const base = new URL('.', document.baseURI);
+          event.preventDefault();
+          if (dest.origin === base.origin && dest.pathname.startsWith(base.pathname)) {
+            send({ href: decodeURIComponent(dest.pathname.slice(base.pathname.length)), external: false });
+          } else send({ href: dest.href, external: true });
+        });
+      }
+    } catch (_) {}
+  })();`;
+}
+
 function previewShell({ title, kicker, bodyClass = '', content, script = '', session = 'baddev-preview', styles = '', captureConsole = true }) {
   const reporter = `(() => {
     const token = ${JSON.stringify(session)};
@@ -114,7 +157,7 @@ function previewShell({ title, kicker, bodyClass = '', content, script = '', ses
   .ts-runner{display:grid;gap:18px}.ts-note{padding:14px 16px;background:#15151b;border:1px solid var(--line);border-radius:14px;color:#cacad2}.ts-output{display:grid;gap:18px;grid-template-columns:1.1fr .9fr}.ts-stage,.ts-code{min-width:0;padding:18px;border-radius:16px;border:1px solid var(--line);background:#121318}.ts-stage #app{min-height:180px}.ts-code pre{margin:0;overflow:auto;font:12px/1.55 Consolas,monospace;color:#dce9ff;white-space:pre}.ts-label{display:flex;align-items:center;gap:8px;color:#ff9caf;font-size:10px;letter-spacing:1.8px;font-weight:800;margin-bottom:12px}.ts-label::before{content:'';width:14px;height:1px;background:var(--accent)}
   @media(max-width:820px){body{padding:14px}header,.preview-body{padding:18px}.ts-output{grid-template-columns:1fr}}
   ${styles}
-  </style><script>${safeScript(reporter)}</script></head><body class="${bodyClass}"><main><header><small>${escapeHtml(kicker)}</small><h1>${escapeHtml(title)}</h1><p class="preview-sub">Vista previa generada en memoria por BadDev. No se ejecutan conexiones externas.</p></header><section class="preview-body">${content}</section></main>${script ? `<script>${safeScript(script)}</script>` : ''}</body></html>`;
+  </style><script>${safeScript(reporter + navigationGuard(session))}</script></head><body class="${bodyClass}"><main><header><small>${escapeHtml(kicker)}</small><h1>${escapeHtml(title)}</h1><p class="preview-sub">Vista previa generada en memoria por BadDev. No se ejecutan conexiones externas.</p></header><section class="preview-body">${content}</section></main>${script ? `<script>${safeScript(script)}</script>` : ''}</body></html>`;
 }
 
 function renderMarkdownInline(text, resolveImage = null) {
@@ -346,6 +389,7 @@ async function buildHtmlPreview(files, entry = 'index.html', session = 'baddev-p
     window.addEventListener('unhandledrejection', (e) => { report(e.reason?.message || e.reason || 'Promesa rechazada'); });
     window.addEventListener('securitypolicyviolation', (e) => { report('Recurso bloqueado por seguridad: ' + e.violatedDirective); });
   })();`;
+  reporter.textContent += navigationGuard(session);
   policy.after(reporter);
   const output = `<!doctype html>\n${documentHtml.documentElement.outerHTML}`;
   if (output.length - imageStats.chars > MAX_PREVIEW_BYTES * 1.3) throw new Error('El resultado de la vista previa supera el límite.');
