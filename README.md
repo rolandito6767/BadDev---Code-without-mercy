@@ -53,48 +53,8 @@ Abre la terminal con **Ver → Terminal**, el botón `>_` de la barra de pestañ
 
 Los nuevos tonos se ven en el editor, pestañas, explorador, vistas de Python, búsqueda, menús, ventanas, Learn y Sandbox. Los colores de las páginas que programas dentro de la vista previa NO se alteran.
 
-## Crear el .exe de escritorio (Windows)
 
-1. `npm install`
-2. Prueba la app de escritorio sin empaquetar: `npm run desktop:dev` (abre con las herramientas de desarrollo).
-3. Genera los ejecutables: `npm run desktop:build`.
-4. Resultado en `dist_desktop`: `BadDev-1.3.0-portable.exe` (un solo archivo, sin instalar) y `BadDev-1.3.0-nsis.exe` (instalador). Pesan decenas de MB porque incluyen Electron.
 
-Si aparece «Cannot create symbolic link» al empaquetar, activa el **Modo de desarrollador** de Windows (Configuración → Para programadores) o abre CMD como administrador y repite el paso 3.
-
-## Instalar en Windows (Sublime Text)
-
-1. Guarda o exporta tus archivos personales antes de cambiar de versión.
-2. Extrae **BadDev-V1.3.zip** en una carpeta nueva.
-3. Abre la carpeta **BadDev-V1.3** con **File → Open Folder** en Sublime Text.
-4. Abre CMD en esa carpeta y ejecuta:
-
-```bat
-npm install
-npm run dev
-```
-
-5. Abre en Chrome la dirección indicada por Vite (habitualmente http://127.0.0.1:5173/).
-
-## Pruebas recomendadas
-
-1. Crea un proyecto y escribe en `index.html` sin guardar.
-2. Pulsa la nueva **X** junto a su nombre y comprueba el modal de protección. Usa **Cancelar**: debes conservar tu proyecto y el código.
-3. Vuelve a pulsar la X, elige guardar una copia o descartar explícitamente y confirma el regreso al menú.
-4. Abre un proyecto guardado para comprobar que la X vuelve a aparecer y que su nombre es correcto.
-5. Abre **Configuración** y cambia a cada uno de los cinco temas. Revisa pestañas, panel de Python, vista previa, Learn y Sandbox.
-6. Revisa que la función de Python de la Etapa G sigue disponible y que HTML/CSS/JS se visualizan.
-
-## Comandos útiles
-
-```bat
-npm test
-npm run build
-```
-
-## Seguridad del trabajo
-
-Al cerrar el proyecto, **No guardar** descarta los cambios pendientes. La restauración automática de sesiones sigue desactivada, como pediste en la Etapa G. El complemento Python local es opcional y debe iniciarse por separado con `npm run python:bridge` cuando desees usar Python instalado en Windows.
 
 ## Límites de verificación
 
